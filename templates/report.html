@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Report an Emergency | Disaster Response</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        /* =========================================
+           EMERGENCY REPORT PAGE
+           ========================================= */
+
+        body {
+            background:
+                linear-gradient(
+                    180deg,
+                    #f8fafc 0%,
+                    #f1f5f9 100%
+                );
+        }
+
+        .report-page {
+            width: 100%;
+
+            max-width: 900px;
+
+            margin: 0 auto;
+
+            padding: 45px 20px 70px;
+        }
+
+        /* =========================================
+           PAGE HEADER
+           ========================================= */
+
+        .report-heading {
+            text-align: center;
+
+            margin-bottom: 35px;
+        }
+
+        .report-heading-icon {
+            width: 72px;
+            height: 72px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin: 0 auto 18px;
+
+            border-radius: 50%;
+
+            background: #fee2e2;
+
+            border: 2px solid #fecaca;
+
+            font-size: 35px;
+        }
+
+        .report-heading h1 {
+            margin-bottom: 12px;
+
+            color: #0f172a;
+
+            font-size:
+                clamp(32px, 5vw, 48px);
+
+            line-height: 1.1;
+
+            letter-spacing: -0.035em;
+        }
+
+        .report-heading p {
+            max-width: 680px;
+
+            margin: 0 auto;
+
+            color: #64748b;
+
+            font-size: 17px;
+
+            line-height: 1.7;
+        }
+
+        /* =========================================
+           REPORT FORM
+           ========================================= */
+
+        .report-form {
+            width: 100%;
+
+            max-width: none;
+
+            margin: 0;
+
+            gap: 0;
+        }
+
+        .form-section {
+            background: white;
+
+            padding: 28px;
+
+            margin-bottom: 20px;
+
+            border-radius: 14px;
+
+            border: 1px solid #e2e8f0;
+
+            box-shadow:
+                0 5px 18px
+                rgba(15, 23, 42, 0.06);
+        }
+
+        .form-section h2 {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin-bottom: 10px;
+
+            color: #0f172a;
+
+            font-size: 21px;
+        }
+
+        .section-help {
+            margin-bottom: 18px;
+
+            color: #64748b;
+
+            line-height: 1.65;
+
+            font-size: 14px;
+        }
+
+        /* =========================================
+           GPS
+           ========================================= */
+
+        .gps-panel {
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #f8fafc
+                );
+
+            border: 1px solid #bfdbfe;
+
+            border-radius: 12px;
+
+            padding: 20px;
+        }
+
+        .gps-status-row {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin-bottom: 12px;
+        }
+
+        .gps-live-dot {
+            width: 11px;
+            height: 11px;
+
+            border-radius: 50%;
+
+            background: #2563eb;
+
+            box-shadow:
+                0 0 0 5px rgba(37, 99, 235, 0.12);
+        }
+
+        #gps-status {
+            margin: 0;
+
+            font-weight: 700;
+
+            color: #2563eb;
+        }
+
+        .gps-detail {
+            padding: 11px 13px;
+
+            margin-top: 9px;
+
+            border-radius: 8px;
+
+            background: white;
+
+            border: 1px solid #dbeafe;
+
+            color: #475569;
+
+            font-size: 14px;
+        }
+
+        /* =========================================
+           FORM LABELS
+           ========================================= */
+
+        .field-label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #0f172a;
+
+            font-size: 15px;
+
+            font-weight: 700;
+        }
+
+        .required-mark {
+            color: #dc2626;
+        }
+
+        /* =========================================
+           LOCATION FIELD
+           ========================================= */
+
+        .location-input {
+            background: #f8fafc;
+
+            cursor: not-allowed;
+        }
+
+        /* =========================================
+           DESCRIPTION
+           ========================================= */
+
+        .description-wrapper {
+            position: relative;
+        }
+
+        .description-wrapper textarea {
+            min-height: 170px;
+
+            line-height: 1.65;
+        }
+
+        .description-hint {
+            display: block;
+
+            margin-top: 8px;
+
+            color: #94a3b8;
+
+            font-size: 13px;
+        }
+
+        /* =========================================
+           EVIDENCE UPLOAD
+           ========================================= */
+
+        .upload-box {
+            padding: 20px;
+
+            border: 2px dashed #cbd5e1;
+
+            border-radius: 12px;
+
+            background: #f8fafc;
+
+            text-align: center;
+
+            transition:
+                border-color 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .upload-box:hover {
+            border-color: #94a3b8;
+
+            background: #f1f5f9;
+        }
+
+        .upload-icon {
+            font-size: 35px;
+
+            margin-bottom: 8px;
+        }
+
+        .upload-text {
+            margin-bottom: 14px;
+
+            color: #475569;
+
+            font-size: 14px;
+        }
+
+        .upload-box input[type="file"] {
+            max-width: 100%;
+
+            background: white;
+
+            border: 1px solid #cbd5e1;
+        }
+
+        #image-status {
+            margin-top: 12px;
+
+            color: #64748b;
+
+            font-size: 14px;
+        }
+
+        #image-preview {
+            display: none;
+
+            width: 100%;
+
+            max-width: 560px;
+
+            max-height: 380px;
+
+            object-fit: contain;
+
+            margin: 18px auto 0;
+
+            border-radius: 12px;
+
+            border: 1px solid #cbd5e1;
+
+            box-shadow:
+                0 8px 22px
+                rgba(15, 23, 42, 0.09);
+        }
+
+        /* =========================================
+           AI ANALYSIS
+           ========================================= */
+
+        .ai-panel {
+            background:
+                linear-gradient(
+                    135deg,
+                    #f8fafc,
+                    #ffffff
+                );
+        }
+
+        .ai-list {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 12px;
+
+            margin-top: 18px;
+
+            padding: 0;
+
+            list-style: none;
+        }
+
+        .ai-list li {
+            padding: 14px;
+
+            border-radius: 9px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+
+            color: #475569;
+
+            font-size: 14px;
+        }
+
+        /* =========================================
+           SUBMIT SECTION
+           ========================================= */
+
+        .submit-section {
+            padding: 24px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #fff7ed,
+                    #ffffff
+                );
+
+            border: 1px solid #fed7aa;
+
+            border-radius: 14px;
+
+            text-align: center;
+        }
+
+        .submit-note {
+            margin-bottom: 16px;
+
+            color: #64748b;
+
+            font-size: 13px;
+        }
+
+        #submit-button {
+            width: 100%;
+
+            min-height: 54px;
+
+            font-size: 17px;
+        }
+
+        #submit-button:disabled {
+            background: #94a3b8;
+
+            cursor: not-allowed;
+
+            transform: none;
+
+            box-shadow: none;
+        }
+
+        /* =========================================
+           BACK BUTTON
+           ========================================= */
+
+        .back-area {
+            display: flex;
+
+            justify-content: center;
+
+            margin-top: 20px;
+        }
+
+        .back-area button {
+            min-width: 190px;
+        }
+
+        /* =========================================
+           MOBILE
+           ========================================= */
+
+        @media (max-width: 700px) {
+
+            .report-page {
+                padding:
+                    30px 14px
+                    55px;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .ai-list {
+                grid-template-columns: 1fr;
+            }
+
+            .gps-panel {
+                padding: 17px;
+            }
+
+            .report-heading h1 {
+                font-size: 34px;
+            }
+
+            .report-heading p {
+                font-size: 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     HEADER
+     ========================================= -->
+
+<header>
+
+    <div
+        style="
+            max-width:1100px;
+            margin:0 auto;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+            flex-wrap:wrap;
+        "
+    >
+
+        <h2>
+            🚨 Disaster Response
+        </h2>
+
+        <a
+            href="/"
+            style="
+                color:white;
+                font-weight:600;
+            "
+        >
+            Home
+        </a>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================
+     MAIN PAGE
+     ========================================= -->
+
+<main class="report-page">
+
+
+    <!-- =====================================
+         PAGE INTRO
+         ===================================== -->
+
+    <section class="report-heading">
+
+        <div class="report-heading-icon">
+            🚨
+        </div>
+
+        <h1>
+            Report an Emergency
+        </h1>
+
+        <p>
+            Provide the emergency details, location,
+            and optional evidence. The system will
+            analyze the report and help prioritize
+            the response.
+        </p>
+
+    </section>
+
+
+    <!-- =====================================
+         REPORT FORM
+         ===================================== -->
+
+    <form
+        action="{{ url_for('submit_report') }}"
+        method="POST"
+        enctype="multipart/form-data"
+        id="report-form"
+        class="report-form"
+    >
+
+
+        <!-- ==================================
+             GPS LOCATION
+             ================================== -->
+
+        <section class="form-section">
+
+            <h2>
+                📍 GPS Location
+            </h2>
+
+            <p class="section-help">
+                Your browser location is captured
+                automatically before the emergency
+                report can be submitted.
+            </p>
+
+
+            <div class="gps-panel">
+
+                <div class="gps-status-row">
+
+                    <div class="gps-live-dot"></div>
+
+                    <p id="gps-status">
+                        📡 Detecting your location...
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="gps-detail"
+                    id="gps-coordinates"
+                >
+                    Coordinates: Waiting for GPS...
+                </div>
+
+
+                <div
+                    class="gps-detail"
+                    id="gps-accuracy"
+                >
+                    Accuracy: Waiting for GPS...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================
+             EMERGENCY LOCATION
+             ================================== -->
+
+        <section class="form-section">
+
+            <label
+                for="location"
+                class="field-label"
+            >
+                📍 Emergency Location
+                <span class="required-mark">
+                    *
+                </span>
+            </label>
+
+
+            <input
+                type="text"
+                id="location"
+                name="location"
+                class="location-input"
+                placeholder="Detecting your location..."
+                readonly
+                required
+            >
+
+
+            <input
+                type="hidden"
+                id="latitude"
+                name="latitude"
+            >
+
+
+            <input
+                type="hidden"
+                id="longitude"
+                name="longitude"
+            >
+
+        </section>
+
+
+        <!-- ==================================
+             DESCRIPTION
+             ================================== -->
+
+        <section class="form-section">
+
+            <h2>
+                📝 Describe the Emergency
+            </h2>
+
+            <p class="section-help">
+                Describe what happened, where it happened,
+                and any immediate danger that people may
+                be facing.
+            </p>
+
+
+            <div class="description-wrapper">
+
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="7"
+                    placeholder="Example: Heavy rain has flooded the road and water has entered several houses."
+                    required
+                ></textarea>
+
+
+                <span class="description-hint">
+                    Be as specific as possible so the
+                    analysis can provide useful results.
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================
+             EVIDENCE PHOTO
+             ================================== -->
+
+        <section class="form-section">
+
+            <h2>
+                📸 Emergency Evidence
+            </h2>
+
+            <p class="section-help">
+                Upload a photo showing the emergency
+                situation. Evidence is optional, but
+                it can help authorities understand
+                the incident.
+            </p>
+
+
+            <div class="upload-box">
+
+                <div class="upload-icon">
+                    📷
+                </div>
+
+                <p class="upload-text">
+                    Select an image from your device
+                </p>
+
+
+                <input
+                    type="file"
+                    id="evidence-image"
+                    name="evidence_image"
+                    accept="image/*"
+                >
+
+
+                <p id="image-status">
+                    📷 No image selected
+                </p>
+
+
+                <img
+                    id="image-preview"
+                    src=""
+                    alt="Emergency evidence preview"
+                >
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================
+             AI ANALYSIS
+             ================================== -->
+
+        <section class="form-section ai-panel">
+
+            <h2>
+                🤖 AI Analysis
+            </h2>
+
+            <p class="section-help">
+                After submission, the system processes
+                the emergency report using the available
+                disaster analysis modules.
+            </p>
+
+
+            <ul class="ai-list">
+
+                <li>
+                    🌪️
+                    <strong>
+                        Disaster Classification
+                    </strong>
+                    <br>
+                    Identifies the disaster type.
+                </li>
+
+
+                <li>
+                    ⚠️
+                    <strong>
+                        Severity Prediction
+                    </strong>
+                    <br>
+                    Estimates the severity level.
+                </li>
+
+
+                <li>
+                    🔍
+                    <strong>
+                        Related Report Detection
+                    </strong>
+                    <br>
+                    Checks for similar reports.
+                </li>
+
+
+                <li>
+                    🚨
+                    <strong>
+                        Priority Calculation
+                    </strong>
+                    <br>
+                    Calculates an emergency priority score.
+                </li>
+
+            </ul>
+
+        </section>
+
+
+        <!-- ==================================
+             SUBMIT
+             ================================== -->
+
+        <section class="submit-section">
+
+            <p class="submit-note">
+                GPS location must be detected before
+                this report can be submitted.
+            </p>
+
+
+            <button
+                type="submit"
+                id="submit-button"
+                disabled
+            >
+                📡 Waiting for GPS...
+            </button>
+
+        </section>
+
+
+    </form>
+
+
+    <!-- =====================================
+         BACK TO HOME
+         ===================================== -->
+
+    <div class="back-area">
+
+        <a href="/">
+
+            <button
+                type="button"
+                class="secondary-button"
+            >
+                ← Back to Home
+            </button>
+
+        </a>
+
+    </div>
+
+
+</main>
+
+
+<!-- =========================================
+     JAVASCRIPT
+     ========================================= -->
+
+<script>
+
+
+// ==========================================
+// GPS ELEMENTS
+// ==========================================
+
+const gpsStatus =
+    document.getElementById(
+        "gps-status"
+    );
+
+
+const gpsCoordinates =
+    document.getElementById(
+        "gps-coordinates"
+    );
+
+
+const gpsAccuracy =
+    document.getElementById(
+        "gps-accuracy"
+    );
+
+
+const locationInput =
+    document.getElementById(
+        "location"
+    );
+
+
+const latitudeInput =
+    document.getElementById(
+        "latitude"
+    );
+
+
+const longitudeInput =
+    document.getElementById(
+        "longitude"
+    );
+
+
+const submitButton =
+    document.getElementById(
+        "submit-button"
+    );
+
+
+const reportForm =
+    document.getElementById(
+        "report-form"
+    );
+
+
+// ==========================================
+// IMAGE ELEMENTS
+// ==========================================
+
+const evidenceImage =
+    document.getElementById(
+        "evidence-image"
+    );
+
+
+const imageStatus =
+    document.getElementById(
+        "image-status"
+    );
+
+
+const imagePreview =
+    document.getElementById(
+        "image-preview"
+    );
+
+
+// ==========================================
+// IMAGE PREVIEW
+// ==========================================
+
+evidenceImage.addEventListener(
+    "change",
+    function() {
+
+        const file =
+            evidenceImage.files[0];
+
+
+        if (!file) {
+
+            imageStatus.textContent =
+                "📷 No image selected";
+
+            imagePreview.style.display =
+                "none";
+
+            imagePreview.src = "";
+
+            return;
+        }
+
+
+        // Check image type
+
+        if (
+            !file.type.startsWith(
+                "image/"
+            )
+        ) {
+
+            imageStatus.textContent =
+                "❌ Please select an image file.";
+
+            evidenceImage.value = "";
+
+            imagePreview.style.display =
+                "none";
+
+            return;
+        }
+
+
+        // Show selected filename
+
+        imageStatus.textContent =
+            "✅ Selected: " +
+            file.name;
+
+
+        // Preview image
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function(event) {
+
+                imagePreview.src =
+                    event.target.result;
+
+                imagePreview.style.display =
+                    "block";
+
+            };
+
+
+        reader.readAsDataURL(file);
+
+    }
+);
+
+
+// ==========================================
+// GPS DETECTION
+// ==========================================
+
+function detectGPS() {
+
+    if (!navigator.geolocation) {
+
+        gpsStatus.textContent =
+            "❌ GPS is not supported by this browser.";
+
+        gpsStatus.style.color =
+            "#dc2626";
+
+        submitButton.disabled =
+            true;
+
+        return;
+    }
+
+
+    gpsStatus.textContent =
+        "📡 Requesting GPS location...";
+
+    gpsStatus.style.color =
+        "#2563eb";
+
+
+    locationInput.value =
+        "";
+
+    latitudeInput.value =
+        "";
+
+    longitudeInput.value =
+        "";
+
+
+    submitButton.disabled =
+        true;
+
+
+    submitButton.textContent =
+        "📡 Waiting for GPS...";
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const latitude =
+                position.coords.latitude;
+
+
+            const longitude =
+                position.coords.longitude;
+
+
+            const accuracy =
+                position.coords.accuracy;
+
+
+            latitudeInput.value =
+                latitude;
+
+
+            longitudeInput.value =
+                longitude;
+
+
+            gpsStatus.textContent =
+                "✅ GPS detected successfully.";
+
+
+            gpsStatus.style.color =
+                "#16a34a";
+
+
+            gpsCoordinates.textContent =
+                "Coordinates: " +
+                latitude.toFixed(6) +
+                ", " +
+                longitude.toFixed(6);
+
+
+            gpsAccuracy.textContent =
+                "Accuracy: " +
+                Math.round(accuracy) +
+                " meters";
+
+
+            locationInput.value =
+                "GPS: " +
+                latitude.toFixed(6) +
+                ", " +
+                longitude.toFixed(6);
+
+
+            submitButton.disabled =
+                false;
+
+
+            submitButton.textContent =
+                "🚨 Submit Emergency Report";
+
+        },
+
+
+        function(error) {
+
+            console.error(
+                "GPS Error:",
+                error
+            );
+
+
+            latitudeInput.value =
+                "";
+
+            longitudeInput.value =
+                "";
+
+            locationInput.value =
+                "";
+
+
+            submitButton.disabled =
+                true;
+
+
+            submitButton.textContent =
+                "📡 Waiting for GPS...";
+
+
+            if (error.code === 1) {
+
+                gpsStatus.textContent =
+                    "❌ Location permission denied. Please allow Safari to access your location.";
+
+            }
+
+
+            else if (error.code === 2) {
+
+                gpsStatus.textContent =
+                    "❌ Your location could not be determined.";
+
+            }
+
+
+            else if (error.code === 3) {
+
+                gpsStatus.textContent =
+                    "❌ GPS detection timed out. Please try again.";
+
+            }
+
+
+            else {
+
+                gpsStatus.textContent =
+                    "❌ GPS detection failed.";
+
+            }
+
+
+            gpsStatus.style.color =
+                "#dc2626";
+
+
+            gpsCoordinates.textContent =
+                "Coordinates: Not detected";
+
+
+            gpsAccuracy.textContent =
+                "Accuracy: Not available";
+
+        },
+
+
+        {
+            enableHighAccuracy: true,
+
+            timeout: 30000,
+
+            maximumAge: 0
+        }
+
+    );
+
+}
+
+
+// ==========================================
+// FORM VALIDATION
+// ==========================================
+
+reportForm.addEventListener(
+    "submit",
+    function(event) {
+
+        const latitude =
+            latitudeInput.value;
+
+
+        const longitude =
+            longitudeInput.value;
+
+
+        const location =
+            locationInput.value;
+
+
+        const description =
+            document.getElementById(
+                "description"
+            ).value.trim();
+
+
+        // GPS validation
+
+        if (
+            !latitude ||
+            !longitude ||
+            !location
+        ) {
+
+            event.preventDefault();
+
+
+            alert(
+                "Please wait for GPS location to be detected before submitting the report."
+            );
+
+
+            detectGPS();
+
+            return;
+        }
+
+
+        // Description validation
+
+        if (!description) {
+
+            event.preventDefault();
+
+
+            alert(
+                "Please describe the emergency."
+            );
+
+
+            return;
+        }
+
+
+        // Old GPS text protection
+
+        if (
+            location ===
+            "Detecting your location..."
+        ) {
+
+            event.preventDefault();
+
+
+            alert(
+                "GPS location has not been detected yet."
+            );
+
+
+            detectGPS();
+
+            return;
+        }
+
+    }
+);
+
+
+// ==========================================
+// START GPS
+// ==========================================
+
+window.addEventListener(
+    "load",
+    function() {
+
+        detectGPS();
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>

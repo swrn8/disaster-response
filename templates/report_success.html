@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Emergency Reports | Disaster Response</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        /* =========================================
+           REPORT SUCCESS PAGE
+           ========================================= */
+
+        body {
+            background:
+                linear-gradient(
+                    180deg,
+                    #f8fafc 0%,
+                    #f4f7fb 100%
+                );
+        }
+
+        .success-page {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 45px 20px 70px;
+        }
+
+        .page-intro {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .page-intro .success-icon {
+            width: 78px;
+            height: 78px;
+            margin: 0 auto 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #dcfce7;
+            border: 2px solid #86efac;
+
+            font-size: 38px;
+        }
+
+        .page-intro h1 {
+            margin-bottom: 10px;
+
+            font-size: clamp(30px, 5vw, 44px);
+            line-height: 1.15;
+
+            color: #0f172a;
+        }
+
+        .page-intro p {
+            max-width: 700px;
+            margin: 0 auto;
+
+            color: #64748b;
+            font-size: 17px;
+        }
+
+        /* =========================================
+           RESULT CARDS
+           ========================================= */
+
+        .result-card {
+            width: 100%;
+
+            background: white;
+
+            padding: 28px;
+            margin: 22px 0;
+
+            border-radius: 14px;
+
+            border: 1px solid #e2e8f0;
+
+            box-shadow:
+                0 5px 18px rgba(15, 23, 42, 0.07);
+        }
+
+        .result-card:hover {
+            box-shadow:
+                0 10px 28px rgba(15, 23, 42, 0.09);
+        }
+
+        .result-card > h2 {
+            margin-bottom: 18px;
+
+            color: #0f172a;
+
+            font-size: 23px;
+        }
+
+        .result-card > p {
+            margin: 10px 0;
+
+            color: #475569;
+
+            line-height: 1.7;
+        }
+
+        /* =========================================
+           SUMMARY CARD
+           ========================================= */
+
+        .summary-card {
+            border-top: 4px solid #dc2626;
+        }
+
+        .summary-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 14px;
+
+            margin-top: 20px;
+        }
+
+        .summary-item {
+            padding: 18px;
+
+            border-radius: 10px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+
+            text-align: center;
+        }
+
+        .summary-item .number {
+            display: block;
+
+            font-size: 30px;
+
+            font-weight: 800;
+
+            color: #0f172a;
+
+            margin-bottom: 4px;
+        }
+
+        .summary-item .label {
+            font-size: 13px;
+
+            font-weight: 700;
+
+            color: #64748b;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.04em;
+        }
+
+        /* =========================================
+           REPORT HEADER
+           ========================================= */
+
+        .report-header {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            flex-wrap: wrap;
+
+            margin-bottom: 15px;
+        }
+
+        .report-header h2 {
+            margin: 0;
+        }
+
+        /* =========================================
+           STATUS BOX
+           ========================================= */
+
+        .status-row {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            flex-wrap: wrap;
+
+            padding: 15px 18px;
+
+            margin: 18px 0;
+
+            border-radius: 10px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+        }
+
+        .status-label {
+            font-weight: 700;
+
+            color: #334155;
+        }
+
+        /* =========================================
+           AI ANALYSIS
+           ========================================= */
+
+        .analysis-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 14px;
+
+            margin-top: 18px;
+        }
+
+        .analysis-item {
+            padding: 18px;
+
+            border-radius: 10px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+        }
+
+        .analysis-item .analysis-label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            color: #64748b;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.04em;
+        }
+
+        .analysis-item .analysis-value {
+            font-size: 18px;
+
+            font-weight: 700;
+
+            color: #0f172a;
+        }
+
+        /* =========================================
+           SIMILARITY
+           ========================================= */
+
+        .similarity-card {
+            margin: 22px 0;
+
+            padding: 24px;
+
+            border-radius: 14px;
+
+            border: 2px solid #cbd5e1;
+
+            background: #f8fafc;
+        }
+
+        .similarity-card h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+
+            color: #0f172a;
+        }
+
+        .similarity-duplicate {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .similarity-related {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .similarity-none {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+
+        .similarity-score {
+            display: inline-block;
+
+            margin: 12px 0 5px;
+
+            padding: 7px 13px;
+
+            border-radius: 999px;
+
+            background: white;
+
+            border: 1px solid #cbd5e1;
+
+            font-size: 19px;
+
+            font-weight: 800;
+
+            color: #0f172a;
+        }
+
+        .similar-report-box {
+            margin-top: 18px;
+
+            padding: 18px;
+
+            background: white;
+
+            border-radius: 10px;
+
+            border: 1px solid #d1d5db;
+        }
+
+        .similar-report-box h3 {
+            margin-bottom: 12px;
+
+            color: #0f172a;
+        }
+
+        /* =========================================
+           INFORMATION SECTIONS
+           ========================================= */
+
+        .info-section {
+            margin-top: 22px;
+        }
+
+        .info-section h3 {
+            margin-bottom: 15px;
+
+            color: #0f172a;
+
+            font-size: 20px;
+        }
+
+        .info-row {
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
+            padding: 11px 0;
+
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-row strong {
+            color: #334155;
+        }
+
+        .info-row span {
+            color: #64748b;
+
+            text-align: right;
+        }
+
+        /* =========================================
+           EVIDENCE
+           ========================================= */
+
+        .evidence-area {
+            text-align: center;
+
+            padding-top: 8px;
+        }
+
+        .evidence-area p {
+            color: #475569;
+
+            margin-bottom: 15px;
+        }
+
+        .evidence-area img {
+            display: block;
+
+            width: 100%;
+
+            max-width: 520px;
+
+            max-height: 380px;
+
+            object-fit: contain;
+
+            margin: 18px auto;
+
+            border-radius: 12px;
+
+            border: 1px solid #cbd5e1;
+
+            box-shadow:
+                0 8px 22px rgba(15, 23, 42, 0.10);
+        }
+
+        /* =========================================
+           GPS
+           ========================================= */
+
+        .gps-box {
+            padding: 18px;
+
+            border-radius: 10px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+
+            margin-top: 15px;
+        }
+
+        .gps-coordinate {
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                monospace;
+
+            color: #334155;
+
+            font-size: 15px;
+        }
+
+        /* =========================================
+           TIMELINE
+           ========================================= */
+
+        .report-timeline {
+            margin-top: 20px;
+
+            padding: 5px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 15px;
+        }
+
+        .timeline-icon {
+            width: 48px;
+            height: 48px;
+
+            min-width: 48px;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            border-radius: 50%;
+
+            background: #eff6ff;
+
+            border: 1px solid #bfdbfe;
+
+            font-size: 21px;
+        }
+
+        .timeline-item strong {
+            display: block;
+
+            color: #0f172a;
+
+            margin-bottom: 5px;
+        }
+
+        .timeline-item p {
+            margin: 0;
+
+            color: #64748b;
+
+            line-height: 1.6;
+        }
+
+        .timeline-line {
+            width: 2px;
+
+            height: 34px;
+
+            margin-left: 23px;
+
+            background: #cbd5e1;
+        }
+
+        /* =========================================
+           PROGRESS STEPS
+           ========================================= */
+
+        .progress-steps {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 10px;
+
+            margin-bottom: 25px;
+        }
+
+        .progress-step {
+            padding: 14px;
+
+            text-align: center;
+
+            border-radius: 9px;
+
+            background: #f1f5f9;
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            font-weight: 700;
+        }
+
+        .progress-step.active {
+            background: #dbeafe;
+
+            color: #1d4ed8;
+
+            border: 1px solid #93c5fd;
+        }
+
+        .progress-step.completed {
+            background: #dcfce7;
+
+            color: #166534;
+
+            border: 1px solid #86efac;
+        }
+
+        /* =========================================
+           NAVIGATION AREA
+           ========================================= */
+
+        .navigation-area {
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+            margin-top: 32px;
+        }
+
+        .navigation-area a {
+            display: inline-flex;
+        }
+
+        .navigation-area button {
+            margin: 0;
+        }
+
+        .empty-state {
+            text-align: center;
+
+            padding: 35px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 42px;
+
+            margin-bottom: 12px;
+        }
+
+        /* =========================================
+           MOBILE
+           ========================================= */
+
+        @media (max-width: 750px) {
+
+            .success-page {
+                padding:
+                    30px 14px
+                    50px;
+            }
+
+            .result-card {
+                padding: 21px;
+            }
+
+            .summary-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .analysis-grid {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .info-row {
+                flex-direction: column;
+
+                gap: 5px;
+            }
+
+            .info-row span {
+                text-align: left;
+            }
+
+            .progress-steps {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-intro h1 {
+                font-size: 30px;
+            }
+
+            .page-intro p {
+                font-size: 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div
+        style="
+            max-width:1100px;
+            margin:0 auto;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+            flex-wrap:wrap;
+        "
+    >
+
+        <h2>
+            🚨 Disaster Response
+        </h2>
+
+        <a
+            href="/"
+            style="
+                color:white;
+                font-weight:600;
+            "
+        >
+            Home
+        </a>
+
+    </div>
+
+</header>
+
+
+<main class="success-page">
+
+
+    <!-- =========================================
+         PAGE INTRO
+         ========================================= -->
+
+    <section class="page-intro">
+
+        <div class="success-icon">
+            ✅
+        </div>
+
+        <h1>
+            My Emergency Reports
+        </h1>
+
+        <p>
+            Track your submitted emergencies,
+            AI analysis, evidence, priority,
+            location, and response progress
+            from one place.
+        </p>
+
+    </section>
+
+
+    <!-- =========================================
+         SIMILARITY ANALYSIS
+         ========================================= -->
+
+    {% if similarity_type is defined %}
+
+        <div
+            class="
+                similarity-card
+                {% if similarity_type == 'Duplicate' %}
+                    similarity-duplicate
+                {% elif similarity_type == 'Related' %}
+                    similarity-related
+                {% else %}
+                    similarity-none
+                {% endif %}
+            "
+        >
+
+            <h2>
+                🔍 Similarity Analysis
+            </h2>
+
+
+            {% if similarity_type == "Duplicate" %}
+
+                <p>
+                    🔴
+                    <strong>
+                        Duplicate Report Detected
+                    </strong>
+                </p>
+
+                <p>
+                    This report is highly similar
+                    to an existing emergency report.
+                </p>
+
+
+            {% elif similarity_type == "Related" %}
+
+                <p>
+                    🟡
+                    <strong>
+                        Related Report Detected
+                    </strong>
+                </p>
+
+                <p>
+                    This report appears to be
+                    related to an existing emergency report.
+                </p>
+
+
+            {% else %}
+
+                <p>
+                    🟢
+                    <strong>
+                        No Similar Report Found
+                    </strong>
+                </p>
+
+                <p>
+                    No significant similarity was
+                    detected with the existing reports.
+                </p>
+
+            {% endif %}
+
+
+            {% if similarity_score is defined %}
+
+                <div class="similarity-score">
+
+                    Similarity Score:
+                    {{ "%.1f"|format(similarity_score * 100) }}%
+
+                </div>
+
+            {% endif %}
+
+
+            {% if similar_report is defined and similar_report %}
+
+                <div class="similar-report-box">
+
+                    <h3>
+                        📋 Similar Report
+                    </h3>
+
+                    <div class="info-row">
+
+                        <strong>
+                            Report ID
+                        </strong>
+
+                        <span>
+                            #{{ similar_report.id }}
+                        </span>
+
+                    </div>
+
+
+                    {% if similar_report.disaster_type %}
+
+                        <div class="info-row">
+
+                            <strong>
+                                Disaster Type
+                            </strong>
+
+                            <span>
+                                {{ similar_report.disaster_type }}
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if similar_report.description %}
+
+                        <div class="info-row">
+
+                            <strong>
+                                Description
+                            </strong>
+
+                            <span>
+                                {{ similar_report.description }}
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if similar_report.status %}
+
+                        <div class="info-row">
+
+                            <strong>
+                                Status
+                            </strong>
+
+                            <span>
+                                {{ similar_report.status }}
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =========================================
+         REPORT COUNT
+         ========================================= -->
+
+    <div class="result-card summary-card">
+
+        <h2>
+            📊 Report Summary
+        </h2>
+
+        <p>
+            Overview of the emergency reports
+            currently stored in the system.
+        </p>
+
+
+        <div class="summary-grid">
+
+            <div class="summary-item">
+
+                <span class="number">
+                    {{ reports|length }}
+                </span>
+
+                <span class="label">
+                    Total Reports
+                </span>
+
+            </div>
+
+
+            <div class="summary-item">
+
+                <span class="number">
+                    {{
+                        reports
+                        |selectattr("status", "equalto", "Pending")
+                        |list
+                        |length
+                    }}
+                </span>
+
+                <span class="label">
+                    Pending
+                </span>
+
+            </div>
+
+
+            <div class="summary-item">
+
+                <span class="number">
+                    {{
+                        reports
+                        |selectattr("status", "equalto", "In Progress")
+                        |list
+                        |length
+                    }}
+                </span>
+
+                <span class="label">
+                    In Progress
+                </span>
+
+            </div>
+
+
+            <div class="summary-item">
+
+                <span class="number">
+                    {{
+                        reports
+                        |selectattr("status", "equalto", "Resolved")
+                        |list
+                        |length
+                    }}
+                </span>
+
+                <span class="label">
+                    Resolved
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         REPORT LIST
+         ========================================= -->
+
+    {% if reports %}
+
+
+        {% for report in reports %}
+
+
+            <div class="result-card">
+
+
+                <!-- REPORT HEADER -->
+
+                <div class="report-header">
+
+                    <h2>
+                        🚨 Report #{{ report.id }}
+                    </h2>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="status-row">
+
+                    <span class="status-label">
+                        📌 Current Status
+                    </span>
+
+
+                    {% if report.status == "Pending" %}
+
+                        <span class="status-badge status-pending">
+                            ⏳ Pending
+                        </span>
+
+
+                    {% elif report.status == "In Progress" %}
+
+                        <span class="status-badge status-progress">
+                            🔵 In Progress
+                        </span>
+
+
+                    {% elif report.status == "Resolved" %}
+
+                        <span class="status-badge status-resolved">
+                            🟢 Resolved
+                        </span>
+
+
+                    {% else %}
+
+                        <span class="status-badge">
+                            {{ report.status }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- BASIC INFORMATION -->
+
+                <div class="info-section">
+
+                    <h3>
+                        📋 Report Information
+                    </h3>
+
+
+                    <div class="info-row">
+
+                        <strong>
+                            📍 Location
+                        </strong>
+
+                        <span>
+                            {{ report.location }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <strong>
+                            📝 Description
+                        </strong>
+
+                        <span>
+                            {{ report.description }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================
+                     AI ANALYSIS
+                     ===================================== -->
+
+                <div class="result-card">
+
+                    <h2>
+                        🤖 AI Analysis
+                    </h2>
+
+
+                    <div class="analysis-grid">
+
+                        <div class="analysis-item">
+
+                            <span class="analysis-label">
+                                🌪️ Disaster Type
+                            </span>
+
+                            <span class="analysis-value">
+                                {{ report.disaster_type }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="analysis-item">
+
+                            <span class="analysis-label">
+                                ⚠️ Severity
+                            </span>
+
+                            <span class="analysis-value">
+                                {{ report.severity }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="analysis-item">
+
+                            <span class="analysis-label">
+                                🚨 Priority
+                            </span>
+
+                            <span class="analysis-value">
+
+                                {% if report.priority == "Critical" %}
+
+                                    <span class="priority-badge priority-critical">
+                                        🔴 Critical
+                                    </span>
+
+
+                                {% elif report.priority == "High" %}
+
+                                    <span class="priority-badge priority-high">
+                                        🟠 High
+                                    </span>
+
+
+                                {% elif report.priority == "Medium" %}
+
+                                    <span class="priority-badge priority-medium">
+                                        🟡 Medium
+                                    </span>
+
+
+                                {% else %}
+
+                                    <span class="priority-badge priority-low">
+                                        🟢 Low
+                                    </span>
+
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="analysis-item">
+
+                            <span class="analysis-label">
+                                📊 Priority Score
+                            </span>
+
+                            <span class="analysis-value">
+                                {{ report.priority_score }}/100
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================
+                     EVIDENCE
+                     ===================================== -->
+
+                <div class="result-card">
+
+                    <h2>
+                        📸 Evidence
+                    </h2>
+
+
+                    <div class="evidence-area">
+
+
+                        {% if report.image_filename %}
+
+                            <p>
+                                ✅ Evidence photo was submitted.
+                            </p>
+
+
+                            <img
+                                src="{{ url_for(
+                                    'uploaded_file',
+                                    filename=report.image_filename
+                                ) }}"
+                                alt="Emergency Evidence"
+                            >
+
+
+                            <a
+                                href="{{ url_for(
+                                    'uploaded_file',
+                                    filename=report.image_filename
+                                ) }}"
+                                target="_blank"
+                            >
+
+                                <button type="button">
+                                    🔍 View Evidence
+                                </button>
+
+                            </a>
+
+
+                        {% else %}
+
+                            <p>
+                                📷 No evidence photo was submitted.
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================
+                     GPS INFORMATION
+                     ===================================== -->
+
+                <div class="result-card">
+
+                    <h2>
+                        📍 GPS Information
+                    </h2>
+
+
+                    {% if report.latitude is not none
+                          and report.longitude is not none %}
+
+
+                        <div class="gps-box">
+
+                            <div class="info-row">
+
+                                <strong>
+                                    Latitude
+                                </strong>
+
+                                <span class="gps-coordinate">
+                                    {{ "%.6f"|format(report.latitude) }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="info-row">
+
+                                <strong>
+                                    Longitude
+                                </strong>
+
+                                <span class="gps-coordinate">
+                                    {{ "%.6f"|format(report.longitude) }}
+                                </span>
+
+                            </div>
+
+
+                            <p style="margin-top:15px;">
+                                ✅ GPS coordinates were captured
+                                successfully.
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            style="
+                                margin-top:18px;
+                                text-align:center;
+                            "
+                        >
+
+                            <a
+                                href="https://www.google.com/maps?q={{ report.latitude }},{{ report.longitude }}"
+                                target="_blank"
+                            >
+
+                                <button
+                                    type="button"
+                                    class="location-button"
+                                >
+                                    🗺️ Open Location
+                                </button>
+
+                            </a>
+
+                        </div>
+
+
+                    {% else %}
+
+                        <div class="warning-message">
+
+                            ⚠️ GPS coordinates were not available
+                            for this report.
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- =====================================
+                     REPORT TIMELINE
+                     ===================================== -->
+
+                <div class="result-card">
+
+                    <h2>
+                        🕒 Report Timeline
+                    </h2>
+
+
+                    <div class="info-row">
+
+                        <strong>
+                            Created
+                        </strong>
+
+                        <span>
+
+                            {% if report.created_at %}
+
+                                {{ report.created_at.strftime(
+                                    "%d %B %Y, %I:%M %p"
+                                ) }}
+
+                            {% else %}
+
+                                Not available
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <strong>
+                            Last Updated
+                        </strong>
+
+                        <span>
+
+                            {% if report.updated_at %}
+
+                                {{ report.updated_at.strftime(
+                                    "%d %B %Y, %I:%M %p"
+                                ) }}
+
+                            {% else %}
+
+                                Not available
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <strong>
+                            Current Response
+                        </strong>
+
+                        <span>
+                            {{ report.status }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================
+                     RESPONSE PROGRESS
+                     ===================================== -->
+
+                <div class="result-card">
+
+                    <h2>
+                        📈 Response Progress
+                    </h2>
+
+
+                    <div class="progress-steps">
+
+
+                        {% if report.status == "Pending" %}
+
+                            <div class="progress-step completed">
+                                ✅ Report Received
+                            </div>
+
+                            <div class="progress-step active">
+                                ⏳ Waiting for Response
+                            </div>
+
+                            <div class="progress-step">
+                                🟢 Resolved
+                            </div>
+
+
+                        {% elif report.status == "In Progress" %}
+
+                            <div class="progress-step completed">
+                                ✅ Report Received
+                            </div>
+
+                            <div class="progress-step active">
+                                🔵 Response In Progress
+                            </div>
+
+                            <div class="progress-step">
+                                🟢 Resolved
+                            </div>
+
+
+                        {% elif report.status == "Resolved" %}
+
+                            <div class="progress-step completed">
+                                ✅ Report Received
+                            </div>
+
+                            <div class="progress-step completed">
+                                ✅ Response Completed
+                            </div>
+
+                            <div class="progress-step completed">
+                                🟢 Resolved
+                            </div>
+
+
+                        {% else %}
+
+                            <div class="progress-step active">
+                                📋 Report Received
+                            </div>
+
+                            <div class="progress-step">
+                                🔵 Response In Progress
+                            </div>
+
+                            <div class="progress-step">
+                                🟢 Resolved
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="report-timeline">
+
+
+                        <div class="timeline-item">
+
+                            <div class="timeline-icon">
+                                📥
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Report Received
+                                </strong>
+
+                                <p>
+                                    Emergency report submitted
+                                    to the Disaster Response System.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="timeline-line"></div>
+
+
+                        <div class="timeline-item">
+
+                            <div class="timeline-icon">
+
+                                {% if report.status == "In Progress"
+                                      or report.status == "Resolved" %}
+
+                                    🔵
+
+                                {% else %}
+
+                                    ⏳
+
+                                {% endif %}
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Response In Progress
+                                </strong>
+
+                                <p>
+                                    Authorities are processing
+                                    the emergency response.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="timeline-line"></div>
+
+
+                        <div class="timeline-item">
+
+                            <div class="timeline-icon">
+
+                                {% if report.status == "Resolved" %}
+
+                                    🟢
+
+                                {% else %}
+
+                                    ⏳
+
+                                {% endif %}
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Resolved
+                                </strong>
+
+                                <p>
+                                    Emergency response has
+                                    been completed.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <!-- =====================================
+             EMPTY STATE
+             ===================================== -->
+
+        <div class="result-card empty-state">
+
+            <div class="empty-state-icon">
+                📭
+            </div>
+
+            <h2>
+                No Reports Yet
+            </h2>
+
+            <p>
+                You have not submitted any emergency
+                reports yet.
+            </p>
+
+            <br>
+
+            <a href="/report">
+
+                <button type="button">
+                    🚨 Submit Your First Report
+                </button>
+
+            </a>
+
+        </div>
+
+
+    {% endif %}
+
+
+    <!-- =========================================
+         NAVIGATION
+         ========================================= -->
+
+    <div class="navigation-area">
+
+        <a href="/report">
+
+            <button type="button">
+                🚨 Report Another Emergency
+            </button>
+
+        </a>
+
+
+        <a href="/track">
+
+            <button
+                type="button"
+                class="location-button"
+            >
+                📍 Track a Report
+            </button>
+
+        </a>
+
+
+        <a href="/">
+
+            <button
+                type="button"
+                class="secondary-button"
+            >
+                ← Home
+            </button>
+
+        </a>
+
+    </div>
+
+
+</main>
+
+
+<footer>
+
+    <p>
+        🚨 Disaster Response System
+        · AI-assisted emergency reporting
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>

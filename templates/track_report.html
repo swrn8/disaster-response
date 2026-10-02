@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Track Emergency Report | Disaster Response</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        body {
+            background:
+                linear-gradient(
+                    180deg,
+                    #f8fafc 0%,
+                    #eef2f7 100%
+                );
+        }
+
+        .track-page {
+            width: 100%;
+            max-width: 900px;
+
+            margin: 0 auto;
+
+            padding: 45px 20px 70px;
+        }
+
+        /* =========================================
+           PAGE HEADER
+           ========================================= */
+
+        .track-heading {
+            text-align: center;
+
+            margin-bottom: 35px;
+        }
+
+        .track-icon {
+            width: 74px;
+            height: 74px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin: 0 auto 18px;
+
+            border-radius: 50%;
+
+            background: #dbeafe;
+
+            border: 2px solid #bfdbfe;
+
+            font-size: 36px;
+        }
+
+        .track-heading h1 {
+            margin-bottom: 12px;
+
+            color: #0f172a;
+
+            font-size:
+                clamp(32px, 5vw, 48px);
+
+            line-height: 1.1;
+
+            letter-spacing: -0.035em;
+        }
+
+        .track-heading p {
+            max-width: 680px;
+
+            margin: 0 auto;
+
+            color: #64748b;
+
+            font-size: 17px;
+
+            line-height: 1.7;
+        }
+
+        /* =========================================
+           SEARCH CARD
+           ========================================= */
+
+        .track-card {
+            background: white;
+
+            padding: 30px;
+
+            margin-bottom: 22px;
+
+            border-radius: 14px;
+
+            border: 1px solid #e2e8f0;
+
+            box-shadow:
+                0 6px 20px
+                rgba(15, 23, 42, 0.07);
+        }
+
+        .track-card h2 {
+            margin-bottom: 10px;
+
+            color: #0f172a;
+
+            font-size: 22px;
+        }
+
+        .track-card-description {
+            margin-bottom: 20px;
+
+            color: #64748b;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+        }
+
+        /* =========================================
+           SEARCH FORM
+           ========================================= */
+
+        .track-form {
+            width: 100%;
+
+            max-width: none;
+
+            margin: 0;
+
+            gap: 12px;
+        }
+
+        .track-form label {
+            color: #334155;
+
+            font-size: 14px;
+
+            font-weight: 700;
+        }
+
+        .track-form input {
+            min-height: 52px;
+
+            font-size: 17px;
+        }
+
+        .track-button {
+            width: 100%;
+
+            min-height: 52px;
+
+            margin-top: 4px;
+
+            background: #2563eb;
+        }
+
+        .track-button:hover {
+            background: #1d4ed8;
+        }
+
+        /* =========================================
+           HELPFUL INFORMATION
+           ========================================= */
+
+        .how-card {
+            background:
+                linear-gradient(
+                    135deg,
+                    #ffffff,
+                    #f8fafc
+                );
+        }
+
+        .steps-list {
+            display: grid;
+
+            gap: 12px;
+
+            margin-top: 20px;
+        }
+
+        .step-item {
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 14px;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+        }
+
+        .step-number {
+            width: 34px;
+            height: 34px;
+
+            min-width: 34px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #0f172a;
+
+            color: white;
+
+            font-size: 14px;
+
+            font-weight: 800;
+        }
+
+        .step-item strong {
+            display: block;
+
+            margin-bottom: 3px;
+
+            color: #0f172a;
+        }
+
+        .step-item span {
+            color: #64748b;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+        /* =========================================
+           WHAT YOU CAN SEE
+           ========================================= */
+
+        .tracking-info {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 12px;
+
+            margin-top: 20px;
+        }
+
+        .tracking-item {
+            padding: 16px;
+
+            border-radius: 10px;
+
+            background: white;
+
+            border: 1px solid #e2e8f0;
+        }
+
+        .tracking-item strong {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #0f172a;
+        }
+
+        .tracking-item span {
+            color: #64748b;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+        /* =========================================
+           NAVIGATION
+           ========================================= */
+
+        .track-navigation {
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+            margin-top: 30px;
+        }
+
+        .track-navigation a {
+            display: inline-flex;
+        }
+
+        .track-navigation button {
+            min-width: 195px;
+
+            margin: 0;
+        }
+
+        /* =========================================
+           RESPONSIVE
+           ========================================= */
+
+        @media (max-width: 700px) {
+
+            .track-page {
+                padding:
+                    30px 14px
+                    55px;
+            }
+
+            .track-card {
+                padding: 21px;
+            }
+
+            .track-heading h1 {
+                font-size: 34px;
+            }
+
+            .track-heading p {
+                font-size: 15px;
+            }
+
+            .tracking-info {
+                grid-template-columns: 1fr;
+            }
+
+            .track-navigation {
+                flex-direction: column;
+            }
+
+            .track-navigation a,
+            .track-navigation button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     HEADER
+     ========================================= -->
+
+<header>
+
+    <div
+        style="
+            max-width:1100px;
+            margin:0 auto;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+            flex-wrap:wrap;
+        "
+    >
+
+        <h2>
+            🚨 Disaster Response
+        </h2>
+
+        <a
+            href="/"
+            style="
+                color:white;
+                font-weight:600;
+            "
+        >
+            Home
+        </a>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================
+     MAIN CONTENT
+     ========================================= -->
+
+<main class="track-page">
+
+
+    <!-- PAGE INTRO -->
+
+    <section class="track-heading">
+
+        <div class="track-icon">
+            🔎
+        </div>
+
+        <h1>
+            Track Your Emergency Report
+        </h1>
+
+        <p>
+            Enter the Report ID you received after
+            submitting an emergency report to view
+            its current response status and details.
+        </p>
+
+    </section>
+
+
+    <!-- =========================================
+         SEARCH CARD
+         ========================================= -->
+
+    <section class="track-card">
+
+        <h2>
+            🔎 Find Your Report
+        </h2>
+
+        <p class="track-card-description">
+            Your Report ID is shown after a successful
+            emergency submission. Enter that ID below
+            to retrieve the latest report information.
+        </p>
+
+
+        <form
+            action="{{ url_for('track_report_process') }}"
+            method="POST"
+            class="track-form"
+        >
+
+            <label for="report_id">
+                Report ID
+            </label>
+
+
+            <input
+                type="number"
+                id="report_id"
+                name="report_id"
+                placeholder="Example: 1"
+                min="1"
+                required
+                autocomplete="off"
+            >
+
+
+            <button
+                type="submit"
+                class="track-button"
+            >
+                🔍 Track Report
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- =========================================
+         HOW IT WORKS
+         ========================================= -->
+
+    <section class="track-card how-card">
+
+        <h2>
+            📋 How It Works
+        </h2>
+
+        <p class="track-card-description">
+            Follow these simple steps to check the
+            progress of your emergency report.
+        </p>
+
+
+        <div class="steps-list">
+
+
+            <div class="step-item">
+
+                <div class="step-number">
+                    1
+                </div>
+
+                <div>
+
+                    <strong>
+                        Submit an emergency report
+                    </strong>
+
+                    <span>
+                        Provide your emergency description,
+                        GPS location, and optional evidence.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="step-item">
+
+                <div class="step-number">
+                    2
+                </div>
+
+                <div>
+
+                    <strong>
+                        Note your Report ID
+                    </strong>
+
+                    <span>
+                        Keep the Report ID displayed after
+                        your report is submitted.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="step-item">
+
+                <div class="step-number">
+                    3
+                </div>
+
+                <div>
+
+                    <strong>
+                        Enter the Report ID
+                    </strong>
+
+                    <span>
+                        Use the search form on this page
+                        to retrieve your report.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="step-item">
+
+                <div class="step-number">
+                    4
+                </div>
+
+                <div>
+
+                    <strong>
+                        View response progress
+                    </strong>
+
+                    <span>
+                        Check the latest status, priority,
+                        location, evidence, and response history.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         TRACKING INFORMATION
+         ========================================= -->
+
+    <section class="track-card">
+
+        <h2>
+            📊 Report Tracking Includes
+        </h2>
+
+
+        <div class="tracking-info">
+
+
+            <div class="tracking-item">
+
+                <strong>
+                    📌 Current Status
+                </strong>
+
+                <span>
+                    See whether the report is Pending,
+                    In Progress, or Resolved.
+                </span>
+
+            </div>
+
+
+            <div class="tracking-item">
+
+                <strong>
+                    🚨 Priority
+                </strong>
+
+                <span>
+                    View the calculated emergency
+                    priority level and score.
+                </span>
+
+            </div>
+
+
+            <div class="tracking-item">
+
+                <strong>
+                    📍 GPS Location
+                </strong>
+
+                <span>
+                    Review the coordinates captured
+                    when the report was submitted.
+                </span>
+
+            </div>
+
+
+            <div class="tracking-item">
+
+                <strong>
+                    🕒 Response History
+                </strong>
+
+                <span>
+                    Follow the recorded status changes
+                    throughout the response.
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         NAVIGATION
+         ========================================= -->
+
+    <div class="track-navigation">
+
+
+        <a href="/report">
+
+            <button type="button">
+                🚨 Submit Emergency Report
+            </button>
+
+        </a>
+
+
+        <a href="/reports">
+
+            <button
+                type="button"
+                class="secondary-button"
+            >
+                📋 My Reports
+            </button>
+
+        </a>
+
+
+        <a href="/">
+
+            <button
+                type="button"
+                class="secondary-button"
+            >
+                🏠 Home
+            </button>
+
+        </a>
+
+
+    </div>
+
+
+</main>
+
+
+<!-- =========================================
+     FOOTER
+     ========================================= -->
+
+<footer>
+
+    <p>
+        🚨 AI Disaster Response System
+        · Emergency reporting and response tracking
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>

@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Authority Dashboard | Disaster Response</title>
+
+    <!-- Leaflet -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            color: #1f2937;
+        }
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .navbar {
+            background: #111827;
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 9px 14px;
+            border-radius: 6px;
+            background: #374151;
+        }
+
+        .navbar a:hover {
+            background: #4b5563;
+        }
+
+        .navbar .logout {
+            background: #dc2626;
+        }
+
+        .navbar .logout:hover {
+            background: #b91c1c;
+        }
+
+        /* =====================================================
+           CONTAINER
+        ===================================================== */
+
+        .container {
+            width: 95%;
+            max-width: 1500px;
+            margin: 25px auto;
+        }
+
+        .welcome {
+            margin-bottom: 20px;
+        }
+
+        .welcome h2 {
+            margin: 0 0 6px;
+            font-size: 28px;
+        }
+
+        .welcome p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        /* =====================================================
+           SUMMARY
+        ===================================================== */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #2563eb;
+        }
+
+        .summary-card.high {
+            border-left-color: #dc2626;
+        }
+
+        .summary-card.pending {
+            border-left-color: #f59e0b;
+        }
+
+        .summary-card.progress {
+            border-left-color: #2563eb;
+        }
+
+        .summary-card.resolved {
+            border-left-color: #16a34a;
+        }
+
+        .summary-card.teams {
+            border-left-color: #7c3aed;
+        }
+
+        .summary-card h3 {
+            margin: 0;
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: normal;
+        }
+
+        .summary-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        /* =====================================================
+           PANELS
+        ===================================================== */
+
+        .panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            margin-bottom: 18px;
+        }
+
+        /* =====================================================
+           FILTERS
+        ===================================================== */
+
+        .filters {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .filters input,
+        .filters select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 14px;
+            background: white;
+        }
+
+        /* =====================================================
+           MAP
+        ===================================================== */
+
+        #map {
+            height: 450px;
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* =====================================================
+           ANALYTICS
+        ===================================================== */
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+        }
+
+        /* =====================================================
+           RESCUE TEAMS
+        ===================================================== */
+
+        .team-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .team-summary-card {
+            padding: 16px;
+            border-radius: 10px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+        }
+
+        .team-summary-card h3 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .team-summary-number {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .team-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .team-card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #111827;
+        }
+
+        .team-card p {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .team-status {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .team-status.unavailable {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .release-button {
+            width: 100%;
+            margin-top: 14px;
+            padding: 9px 12px;
+            border: none;
+            border-radius: 6px;
+            background: #f59e0b;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .release-button:hover {
+            background: #d97706;
+        }
+
+        .no-teams {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+        }
+
+        /* =====================================================
+           REPORT QUEUE
+        ===================================================== */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+
+        th {
+            background: #111827;
+            color: white;
+            text-align: left;
+            padding: 12px;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .description {
+            max-width: 280px;
+            line-height: 1.4;
+        }
+
+        .location-text {
+            max-width: 180px;
+        }
+
+        .score {
+            font-weight: bold;
+        }
+
+        /* =====================================================
+           BADGES
+        ===================================================== */
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .badge-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-high {
+            background: #ffedd5;
+            color: #9a3412;
+        }
+
+        .badge-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-low {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-progress {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .badge-resolved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .btn-view {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #1d4ed8;
+        }
+
+        .status-form {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .status-form select {
+            padding: 7px;
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+        }
+
+        .status-form button {
+            padding: 7px 10px;
+            background: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .status-form button:hover {
+            background: #15803d;
+        }
+
+        .assign-form {
+            margin-top: 8px;
+        }
+
+        .assign-form select {
+            width: 100%;
+            padding: 7px;
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+            margin-bottom: 7px;
+        }
+
+        .assign-button {
+            width: 100%;
+            padding: 8px 10px;
+            background: #7c3aed;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .assign-button:hover {
+            background: #6d28d9;
+        }
+
+        .evidence {
+            display: inline-block;
+            margin-top: 6px;
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        /* =====================================================
+           ASSIGNED TEAM
+        ===================================================== */
+
+        .assigned-team {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #ede9fe;
+            border: 1px solid #c4b5fd;
+        }
+
+        .assigned-team strong {
+            color: #5b21b6;
+        }
+
+        .unassigned-team {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f3f4f6;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .no-reports {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1200px) {
+
+            .summary-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .teams-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 900px) {
+
+            .filters {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .team-summary {
+                grid-template-columns: 1fr 1fr;
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .summary-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .teams-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                grid-template-columns: 1fr;
+            }
+
+            .team-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 15px;
+            }
+
+            .container {
+                width: 94%;
+            }
+
+        }
+
+        @media (max-width: 450px) {
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
+
+    <nav class="navbar">
+
+        <h1>
+            🚨 Disaster Response Authority
+        </h1>
+
+        <div class="navbar-right">
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('reports') }}">
+                Public Reports
+            </a>
+
+            <a
+                href="{{ url_for('authority_logout') }}"
+                class="logout"
+            >
+                Logout
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <main class="container">
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <section class="welcome">
+
+            <h2>
+                Authority Dashboard
+            </h2>
+
+            <p>
+                Monitor emergency reports, review priorities,
+                and coordinate rescue response teams.
+            </p>
+
+        </section>
+
+
+        <!-- =================================================
+             SUMMARY
+        ================================================== -->
+
+        <section class="summary-grid">
+
+            <div class="summary-card">
+
+                <h3>
+                    Total Reports
+                </h3>
+
+                <div
+                    class="summary-number"
+                    id="totalReports"
+                >
+                    {{ reports|length }}
+                </div>
+
+            </div>
+
+
+            <div class="summary-card high">
+
+                <h3>
+                    High / Critical
+                </h3>
+
+                <div
+                    class="summary-number"
+                    id="highReports"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="summary-card pending">
+
+                <h3>
+                    Pending
+                </h3>
+
+                <div
+                    class="summary-number"
+                    id="pendingReports"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="summary-card progress">
+
+                <h3>
+                    In Progress
+                </h3>
+
+                <div
+                    class="summary-number"
+                    id="progressReports"
+                >
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="summary-card teams">
+
+                <h3>
+                    Available Teams
+                </h3>
+
+                <div
+                    class="summary-number"
+                    id="availableTeams"
+                >
+                    {{ rescue_teams|selectattr('available')|list|length }}
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SEARCH AND FILTERS
+        ================================================== -->
+
+        <section class="panel">
+
+            <h2>
+                🔎 Search & Filters
+            </h2>
+
+            <div class="filters">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search description or location..."
+                >
+
+
+                <select id="disasterFilter">
+
+                    <option value="">
+                        All Disaster Types
+                    </option>
+
+                    <option value="Flood">
+                        Flood
+                    </option>
+
+                    <option value="Earthquake">
+                        Earthquake
+                    </option>
+
+                    <option value="Fire">
+                        Fire
+                    </option>
+
+                    <option value="Cyclone">
+                        Cyclone
+                    </option>
+
+                </select>
+
+
+                <select id="priorityFilter">
+
+                    <option value="">
+                        All Priorities
+                    </option>
+
+                    <option value="Critical">
+                        Critical
+                    </option>
+
+                    <option value="High">
+                        High
+                    </option>
+
+                    <option value="Medium">
+                        Medium
+                    </option>
+
+                    <option value="Low">
+                        Low
+                    </option>
+
+                </select>
+
+
+                <select id="statusFilter">
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
+                    <option value="Pending">
+                        Pending
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Resolved">
+                        Resolved
+                    </option>
+
+                </select>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MAP
+        ================================================== -->
+
+        <section class="panel">
+
+            <h2>
+                📍 Emergency Report Map
+            </h2>
+
+            <div id="map"></div>
+
+        </section>
+
+
+        <!-- =================================================
+             ANALYTICS
+        ================================================== -->
+
+        <section class="analytics-grid">
+
+            <div class="panel">
+
+                <h2>
+                    Disaster Types
+                </h2>
+
+                <div class="chart-container">
+
+                    <canvas id="disasterChart"></canvas>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <h2>
+                    Report Status
+                </h2>
+
+                <div class="chart-container">
+
+                    <canvas id="statusChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             RESCUE TEAMS
+        ================================================== -->
+
+        <section class="panel">
+
+            <h2>
+                🚑 Rescue Teams
+            </h2>
+
+
+            <div class="team-summary">
+
+                <div class="team-summary-card">
+
+                    <h3>
+                        Total Teams
+                    </h3>
+
+                    <div class="team-summary-number">
+                        {{ rescue_teams|length }}
+                    </div>
+
+                </div>
+
+
+                <div class="team-summary-card">
+
+                    <h3>
+                        Available Teams
+                    </h3>
+
+                    <div class="team-summary-number">
+
+                        {{ rescue_teams|selectattr('available')|list|length }}
+
+                    </div>
+
+                </div>
+
+
+                <div class="team-summary-card">
+
+                    <h3>
+                        Teams With Assignments
+                    </h3>
+
+                    <div class="team-summary-number">
+
+                        {{ rescue_teams
+                            |selectattr('current_assignments', 'gt', 0)
+                            |list
+                            |length
+                        }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="teams-grid">
+
+                {% for team in rescue_teams %}
+
+                <div class="team-card">
+
+                    <h3>
+                        🚑 {{ team.name }}
+                    </h3>
+
+
+                    <p>
+
+                        <strong>
+                            Team Type:
+                        </strong>
+
+                        {{ team.team_type }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Team ID:
+                        </strong>
+
+                        {{ team.team_id }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Location:
+                        </strong>
+
+                        {{ team.location }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Capacity:
+                        </strong>
+
+                        {{ team.capacity }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Current Assignments:
+                        </strong>
+
+                        {{ team.current_assignments }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Remaining Capacity:
+                        </strong>
+
+                        {{ team.get_remaining_capacity() }}
+
+                    </p>
+
+
+                    {% if team.is_available() %}
+
+                        <span class="team-status">
+
+                            🟢 Available
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="team-status unavailable">
+
+                            🔴 At Capacity / Unavailable
+
+                        </span>
+
+                    {% endif %}
+
+
+                    <!-- RELEASE ASSIGNMENT -->
+
+                    {% if team.current_assignments > 0 %}
+
+                        <form
+                            action="{{ url_for(
+                                'release_report_from_team',
+                                team_id=team.team_id
+                            ) }}"
+                            method="POST"
+                        >
+
+                            <button
+                                type="submit"
+                                class="release-button"
+                            >
+                                🔓 Release Assignment
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+                {% else %}
+
+                <div class="no-teams">
+
+                    No rescue teams available.
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             EMERGENCY RESPONSE QUEUE
+        ================================================== -->
+
+        <section class="panel">
+
+            <h2>
+                🚨 Emergency Response Queue
+            </h2>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                ID
+                            </th>
+
+                            <th>
+                                Location
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+
+                            <th>
+                                Disaster
+                            </th>
+
+                            <th>
+                                Severity
+                            </th>
+
+                            <th>
+                                Priority
+                            </th>
+
+                            <th>
+                                Score
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Rescue Team
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="reportsTableBody">
+
+                        {% for report in reports %}
+
+                        <tr
+                            class="report-row"
+
+                            data-id="{{ report.id }}"
+
+                            data-location="{{ report.location|default('', true)|lower }}"
+
+                            data-description="{{ report.description|default('', true)|lower }}"
+
+                            data-disaster="{{ report.disaster_type|default('', true) }}"
+
+                            data-priority="{{ report.priority|default('', true) }}"
+
+                            data-status="{{ report.status|default('', true) }}"
+
+                            data-latitude="{{ report.latitude if report.latitude is not none else '' }}"
+
+                            data-longitude="{{ report.longitude if report.longitude is not none else '' }}"
+                        >
+
+                            <!-- ID -->
+
+                            <td>
+
+                                <strong>
+                                    #{{ report.id }}
+                                </strong>
+
+                            </td>
+
+
+                            <!-- LOCATION -->
+
+                            <td>
+
+                                <div class="location-text">
+
+                                    {{ report.location|default(
+                                        "Location not available",
+                                        true
+                                    ) }}
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- DESCRIPTION -->
+
+                            <td>
+
+                                <div class="description">
+
+                                    {{ report.description|default(
+                                        "No description",
+                                        true
+                                    ) }}
+
+                                </div>
+
+
+                                {% if report.image_filename %}
+
+                                    <a
+                                        class="evidence"
+                                        href="{{ url_for(
+                                            'uploaded_file',
+                                            filename=report.image_filename
+                                        ) }}"
+                                        target="_blank"
+                                    >
+
+                                        📷 View Evidence
+
+                                    </a>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- DISASTER -->
+
+                            <td>
+
+                                {{ report.disaster_type|default(
+                                    "Unknown",
+                                    true
+                                ) }}
+
+                            </td>
+
+
+                            <!-- SEVERITY -->
+
+                            <td>
+
+                                {% if report.severity == "High" %}
+
+                                    <span class="badge badge-high">
+                                        High
+                                    </span>
+
+                                {% elif report.severity == "Medium" %}
+
+                                    <span class="badge badge-medium">
+                                        Medium
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-low">
+                                        Low
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- PRIORITY -->
+
+                            <td>
+
+                                {% if report.priority == "Critical" %}
+
+                                    <span class="badge badge-critical">
+                                        Critical
+                                    </span>
+
+                                {% elif report.priority == "High" %}
+
+                                    <span class="badge badge-high">
+                                        High
+                                    </span>
+
+                                {% elif report.priority == "Medium" %}
+
+                                    <span class="badge badge-medium">
+                                        Medium
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-low">
+                                        Low
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- SCORE -->
+
+                            <td>
+
+                                <span class="score">
+
+                                    {{ report.priority_score }}/100
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                {% if report.status == "Pending" %}
+
+                                    <span class="badge badge-pending">
+                                        Pending
+                                    </span>
+
+                                {% elif report.status == "In Progress" %}
+
+                                    <span class="badge badge-progress">
+                                        In Progress
+                                    </span>
+
+                                {% elif report.status == "Resolved" %}
+
+                                    <span class="badge badge-resolved">
+                                        Resolved
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-medium">
+                                        {{ report.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ASSIGNED RESCUE TEAM -->
+
+                            <td>
+
+                                {% if report.assigned_team_id is not none %}
+
+                                    {% set team_ns = namespace(
+                                        assigned_team=none
+                                    ) %}
+
+
+                                    {% for team in rescue_teams %}
+
+                                        {% if team.team_id == report.assigned_team_id %}
+
+                                            {% set team_ns.assigned_team = team %}
+
+                                        {% endif %}
+
+                                    {% endfor %}
+
+
+                                    {% if team_ns.assigned_team %}
+
+                                        <div class="assigned-team">
+
+                                            <strong>
+                                                🚑
+                                                {{ team_ns.assigned_team.name }}
+                                            </strong>
+
+                                            <br>
+
+                                            <small>
+
+                                                Team ID:
+                                                {{ team_ns.assigned_team.team_id }}
+
+                                            </small>
+
+                                            <br>
+
+                                            <small>
+
+                                                Type:
+                                                {{ team_ns.assigned_team.team_type }}
+
+                                            </small>
+
+                                            <br>
+
+                                            <small>
+
+                                                Location:
+                                                {{ team_ns.assigned_team.location }}
+
+                                            </small>
+
+                                            <br>
+
+                                            <small>
+
+                                                Assignments:
+                                                {{ team_ns.assigned_team.current_assignments }}
+
+                                            </small>
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <div class="unassigned-team">
+
+                                            ⚠️ Assigned team record not found.
+
+                                        </div>
+
+                                    {% endif %}
+
+                                {% else %}
+
+                                    <div class="unassigned-team">
+
+                                        🚑 No rescue team assigned
+
+                                    </div>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ACTIONS -->
+
+                            <td>
+
+                                <a
+                                    class="btn btn-view"
+                                    href="{{ url_for(
+                                        'authority_report_details',
+                                        report_id=report.id
+                                    ) }}"
+                                >
+
+                                    View
+
+                                </a>
+
+
+                                <!-- STATUS FORM -->
+
+                                <form
+                                    class="status-form"
+                                    action="{{ url_for(
+                                        'update_status',
+                                        report_id=report.id
+                                    ) }}"
+                                    method="POST"
+                                >
+
+                                    <select name="status">
+
+                                        <option
+                                            value="Pending"
+                                            {% if report.status == "Pending" %}
+                                                selected
+                                            {% endif %}
+                                        >
+                                            Pending
+                                        </option>
+
+
+                                        <option
+                                            value="In Progress"
+                                            {% if report.status == "In Progress" %}
+                                                selected
+                                            {% endif %}
+                                        >
+                                            In Progress
+                                        </option>
+
+
+                                        <option
+                                            value="Resolved"
+                                            {% if report.status == "Resolved" %}
+                                                selected
+                                            {% endif %}
+                                        >
+                                            Resolved
+                                        </option>
+
+                                    </select>
+
+
+                                    <button type="submit">
+
+                                        Update
+
+                                    </button>
+
+                                </form>
+
+
+                                <!-- ASSIGN TEAM -->
+
+                                {% if report.status != "Resolved" %}
+
+                                    {% if report.assigned_team_id is none %}
+
+                                        <form
+                                            class="assign-form"
+                                            action="{{ url_for(
+                                                'assign_report_to_team',
+                                                report_id=report.id
+                                            ) }}"
+                                            method="POST"
+                                        >
+
+                                            <select
+                                                name="team_id"
+                                                required
+                                            >
+
+                                                <option value="">
+
+                                                    Select Rescue Team
+
+                                                </option>
+
+
+                                                {% for team in rescue_teams %}
+
+                                                    {% if team.is_available() %}
+
+                                                        <option
+                                                            value="{{ team.team_id }}"
+                                                        >
+
+                                                            {{ team.name }}
+                                                            -
+                                                            {{ team.team_type }}
+
+                                                        </option>
+
+                                                    {% endif %}
+
+                                                {% endfor %}
+
+                                            </select>
+
+
+                                            <button
+                                                type="submit"
+                                                class="assign-button"
+                                            >
+
+                                                🚑 Assign Team
+
+                                            </button>
+
+                                        </form>
+
+                                    {% endif %}
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="10"
+                                class="no-reports"
+                            >
+
+                                No emergency reports available.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         LEAFLET
+    ====================================================== -->
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
+    <script>
+
+        /* =====================================================
+           REPORT DATA
+        ===================================================== */
+
+        const reportRows = Array.from(
+            document.querySelectorAll(".report-row")
+        );
+
+
+        /* =====================================================
+           SUMMARY COUNTS
+        ===================================================== */
+
+        function updateSummary() {
+
+            let high = 0;
+
+            let pending = 0;
+
+            let progress = 0;
+
+            let resolved = 0;
+
+
+            reportRows.forEach(function(row) {
+
+                const priority =
+                    row.dataset.priority;
+
+                const status =
+                    row.dataset.status;
+
+
+                if (
+                    priority === "High" ||
+                    priority === "Critical"
+                ) {
+
+                    high++;
+
+                }
+
+
+                if (status === "Pending") {
+
+                    pending++;
+
+                }
+
+
+                if (status === "In Progress") {
+
+                    progress++;
+
+                }
+
+
+                if (status === "Resolved") {
+
+                    resolved++;
+
+                }
+
+            });
+
+
+            document.getElementById(
+                "highReports"
+            ).textContent = high;
+
+
+            document.getElementById(
+                "pendingReports"
+            ).textContent = pending;
+
+
+            document.getElementById(
+                "progressReports"
+            ).textContent = progress;
+
+        }
+
+
+        updateSummary();
+
+
+        /* =====================================================
+           SEARCH AND FILTERS
+        ===================================================== */
+
+        const searchInput =
+            document.getElementById("searchInput");
+
+
+        const disasterFilter =
+            document.getElementById("disasterFilter");
+
+
+        const priorityFilter =
+            document.getElementById("priorityFilter");
+
+
+        const statusFilter =
+            document.getElementById("statusFilter");
+
+
+        function filterReports() {
+
+            const search =
+                searchInput.value
+                    .toLowerCase()
+                    .trim();
+
+
+            const disaster =
+                disasterFilter.value;
+
+
+            const priority =
+                priorityFilter.value;
+
+
+            const status =
+                statusFilter.value;
+
+
+            reportRows.forEach(function(row) {
+
+                const location =
+                    row.dataset.location;
+
+
+                const description =
+                    row.dataset.description;
+
+
+                const rowDisaster =
+                    row.dataset.disaster;
+
+
+                const rowPriority =
+                    row.dataset.priority;
+
+
+                const rowStatus =
+                    row.dataset.status;
+
+
+                const matchesSearch =
+                    !search ||
+                    location.includes(search) ||
+                    description.includes(search);
+
+
+                const matchesDisaster =
+                    !disaster ||
+                    rowDisaster === disaster;
+
+
+                const matchesPriority =
+                    !priority ||
+                    rowPriority === priority;
+
+
+                const matchesStatus =
+                    !status ||
+                    rowStatus === status;
+
+
+                if (
+                    matchesSearch &&
+                    matchesDisaster &&
+                    matchesPriority &&
+                    matchesStatus
+                ) {
+
+                    row.style.display = "";
+
+                } else {
+
+                    row.style.display = "none";
+
+                }
+
+            });
+
+
+            updateMapMarkers();
+
+        }
+
+
+        searchInput.addEventListener(
+            "input",
+            filterReports
+        );
+
+
+        disasterFilter.addEventListener(
+            "change",
+            filterReports
+        );
+
+
+        priorityFilter.addEventListener(
+            "change",
+            filterReports
+        );
+
+
+        statusFilter.addEventListener(
+            "change",
+            filterReports
+        );
+
+
+        /* =====================================================
+           MAP
+        ===================================================== */
+
+        const map =
+            L.map("map").setView(
+                [20.5937, 78.9629],
+                5
+            );
+
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+                attribution:
+                    "&copy; OpenStreetMap contributors"
+            }
+        ).addTo(map);
+
+
+        let markers = [];
+
+
+        function priorityColor(priority) {
+
+            if (priority === "Critical") {
+
+                return "#991b1b";
+
+            }
+
+
+            if (priority === "High") {
+
+                return "#dc2626";
+
+            }
+
+
+            if (priority === "Medium") {
+
+                return "#f59e0b";
+
+            }
+
+
+            return "#16a34a";
+
+        }
+
+
+        function addMarkers() {
+
+            reportRows.forEach(function(row) {
+
+                const latitude =
+                    parseFloat(
+                        row.dataset.latitude
+                    );
+
+
+                const longitude =
+                    parseFloat(
+                        row.dataset.longitude
+                    );
+
+
+                if (
+                    Number.isNaN(latitude) ||
+                    Number.isNaN(longitude)
+                ) {
+
+                    return;
+
+                }
+
+
+                const reportId =
+                    row.dataset.id;
+
+
+                const location =
+                    row.dataset.location;
+
+
+                const description =
+                    row.dataset.description;
+
+
+                const disaster =
+                    row.dataset.disaster;
+
+
+                const priority =
+                    row.dataset.priority;
+
+
+                const status =
+                    row.dataset.status;
+
+
+                const marker =
+                    L.circleMarker(
+                        [
+                            latitude,
+                            longitude
+                        ],
+                        {
+                            radius: 9,
+
+                            fillColor:
+                                priorityColor(
+                                    priority
+                                ),
+
+                            color: "#ffffff",
+
+                            weight: 2,
+
+                            opacity: 1,
+
+                            fillOpacity: 0.85
+                        }
+                    ).addTo(map);
+
+
+                marker.bindPopup(
+                    `
+                    <div style="min-width:220px;">
+
+                        <strong>
+                            Emergency Report #${reportId}
+                        </strong>
+
+                        <hr>
+
+                        <strong>
+                            Location:
+                        </strong>
+
+                        ${location || "Not available"}
+
+                        <br><br>
+
+                        <strong>
+                            Disaster:
+                        </strong>
+
+                        ${disaster || "Unknown"}
+
+                        <br><br>
+
+                        <strong>
+                            Priority:
+                        </strong>
+
+                        ${priority || "Unknown"}
+
+                        <br><br>
+
+                        <strong>
+                            Status:
+                        </strong>
+
+                        ${status || "Unknown"}
+
+                        <br><br>
+
+                        <strong>
+                            Description:
+                        </strong>
+
+                        ${description || "No description"}
+
+                        <br><br>
+
+                        <a
+                            href="/authority/report/${reportId}"
+                            style="color:#2563eb;"
+                        >
+                            View Report Details
+                        </a>
+
+                    </div>
+                    `
+                );
+
+
+                markers.push({
+
+                    marker: marker,
+
+                    row: row
+
+                });
+
+            });
+
+        }
+
+
+        addMarkers();
+
+
+        /* =====================================================
+           MAP FILTERING
+        ===================================================== */
+
+        function updateMapMarkers() {
+
+            const search =
+                searchInput.value
+                    .toLowerCase()
+                    .trim();
+
+
+            const disaster =
+                disasterFilter.value;
+
+
+            const priority =
+                priorityFilter.value;
+
+
+            const status =
+                statusFilter.value;
+
+
+            markers.forEach(function(item) {
+
+                const row =
+                    item.row;
+
+
+                const marker =
+                    item.marker;
+
+
+                const location =
+                    row.dataset.location;
+
+
+                const description =
+                    row.dataset.description;
+
+
+                const rowDisaster =
+                    row.dataset.disaster;
+
+
+                const rowPriority =
+                    row.dataset.priority;
+
+
+                const rowStatus =
+                    row.dataset.status;
+
+
+                const matchesSearch =
+                    !search ||
+                    location.includes(search) ||
+                    description.includes(search);
+
+
+                const matchesDisaster =
+                    !disaster ||
+                    rowDisaster === disaster;
+
+
+                const matchesPriority =
+                    !priority ||
+                    rowPriority === priority;
+
+
+                const matchesStatus =
+                    !status ||
+                    rowStatus === status;
+
+
+                if (
+                    matchesSearch &&
+                    matchesDisaster &&
+                    matchesPriority &&
+                    matchesStatus
+                ) {
+
+                    if (!map.hasLayer(marker)) {
+
+                        marker.addTo(map);
+
+                    }
+
+                } else {
+
+                    if (map.hasLayer(marker)) {
+
+                        map.removeLayer(marker);
+
+                    }
+
+                }
+
+            });
+
+        }
+
+
+        /* =====================================================
+           CHART DATA
+        ===================================================== */
+
+        let flood = 0;
+
+        let earthquake = 0;
+
+        let fire = 0;
+
+        let cyclone = 0;
+
+        let pending = 0;
+
+        let inProgress = 0;
+
+        let resolved = 0;
+
+
+        reportRows.forEach(function(row) {
+
+            const disaster =
+                row.dataset.disaster;
+
+
+            const status =
+                row.dataset.status;
+
+
+            if (disaster === "Flood") {
+
+                flood++;
+
+            }
+
+
+            if (disaster === "Earthquake") {
+
+                earthquake++;
+
+            }
+
+
+            if (disaster === "Fire") {
+
+                fire++;
+
+            }
+
+
+            if (disaster === "Cyclone") {
+
+                cyclone++;
+
+            }
+
+
+            if (status === "Pending") {
+
+                pending++;
+
+            }
+
+
+            if (status === "In Progress") {
+
+                inProgress++;
+
+            }
+
+
+            if (status === "Resolved") {
+
+                resolved++;
+
+            }
+
+        });
+
+
+        /* =====================================================
+           DISASTER CHART
+        ===================================================== */
+
+        new Chart(
+
+            document.getElementById(
+                "disasterChart"
+            ),
+
+            {
+
+                type: "bar",
+
+                data: {
+
+                    labels: [
+
+                        "Flood",
+
+                        "Earthquake",
+
+                        "Fire",
+
+                        "Cyclone"
+
+                    ],
+
+                    datasets: [
+
+                        {
+
+                            label: "Reports",
+
+                            data: [
+
+                                flood,
+
+                                earthquake,
+
+                                fire,
+
+                                cyclone
+
+                            ]
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+
+                            display: false
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+
+        /* =====================================================
+           STATUS CHART
+        ===================================================== */
+
+        new Chart(
+
+            document.getElementById(
+                "statusChart"
+            ),
+
+            {
+
+                type: "doughnut",
+
+                data: {
+
+                    labels: [
+
+                        "Pending",
+
+                        "In Progress",
+
+                        "Resolved"
+
+                    ],
+
+                    datasets: [
+
+                        {
+
+                            data: [
+
+                                pending,
+
+                                inProgress,
+
+                                resolved
+
+                            ]
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false
+
+                }
+
+            }
+
+        );
+
+    </script>
+
+</body>
+
+</html>

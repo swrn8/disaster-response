@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AI Disaster Response System</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        /* =========================================
+           HOME PAGE
+           ========================================= */
+
+        body {
+            background: #f8fafc;
+        }
+
+        /* =========================================
+           HEADER
+           ========================================= */
+
+        .home-header {
+            background:
+                linear-gradient(
+                    135deg,
+                    #0f172a,
+                    #1e293b
+                );
+
+            color: white;
+
+            padding: 18px 25px;
+
+            box-shadow:
+                0 4px 15px rgba(15, 23, 42, 0.18);
+
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .home-header-inner {
+            width: 100%;
+            max-width: 1180px;
+
+            margin: 0 auto;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+        .brand {
+            font-size: 22px;
+
+            font-weight: 800;
+
+            letter-spacing: -0.02em;
+        }
+
+        .home-nav {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+        }
+
+        .home-nav a {
+            color: #e2e8f0;
+
+            padding: 8px 12px;
+
+            border-radius: 7px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            transition: 0.2s ease;
+        }
+
+        .home-nav a:hover {
+            background: rgba(255, 255, 255, 0.08);
+
+            color: white;
+        }
+
+        /* =========================================
+           HERO
+           ========================================= */
+
+        .home-hero {
+            position: relative;
+
+            overflow: hidden;
+
+            min-height: 680px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 80px 20px;
+
+            background:
+                radial-gradient(
+                    circle at 15% 20%,
+                    rgba(220, 38, 38, 0.12),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 85% 80%,
+                    rgba(37, 99, 235, 0.12),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    180deg,
+                    #ffffff,
+                    #f8fafc
+                );
+        }
+
+        .hero-content {
+            width: 100%;
+
+            max-width: 900px;
+
+            text-align: center;
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+        .hero-label {
+            display: inline-flex;
+
+            align-items: center;
+
+            padding: 7px 13px;
+
+            margin-bottom: 20px;
+
+            border-radius: 999px;
+
+            background: #fee2e2;
+
+            color: #991b1b;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.10em;
+        }
+
+        .hero-content h1 {
+            margin: 0 auto 22px;
+
+            max-width: 850px;
+
+            font-size:
+                clamp(42px, 7vw, 74px);
+
+            line-height: 1.02;
+
+            letter-spacing: -0.045em;
+
+            color: #0f172a;
+        }
+
+        .hero-content h1 span {
+            display: block;
+
+            color: #dc2626;
+        }
+
+        .hero-description {
+            max-width: 750px;
+
+            margin: 0 auto 35px;
+
+            font-size:
+                clamp(16px, 2vw, 19px);
+
+            line-height: 1.75;
+
+            color: #64748b;
+        }
+
+        .hero-buttons {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+        }
+
+        .hero-buttons a {
+            display: inline-flex;
+        }
+
+        .hero-buttons button {
+            min-width: 220px;
+
+            margin: 0;
+        }
+
+        .hero-buttons .secondary-button {
+            background: #0f172a;
+        }
+
+        .hero-buttons .secondary-button:hover {
+            background: #1e293b;
+        }
+
+        /* Decorative shapes */
+
+        .hero-decoration {
+            position: absolute;
+
+            border-radius: 50%;
+
+            filter: blur(2px);
+
+            pointer-events: none;
+        }
+
+        .hero-decoration-one {
+            width: 180px;
+            height: 180px;
+
+            top: 80px;
+            left: -70px;
+
+            background: rgba(220, 38, 38, 0.07);
+        }
+
+        .hero-decoration-two {
+            width: 240px;
+            height: 240px;
+
+            bottom: -90px;
+            right: -80px;
+
+            background: rgba(37, 99, 235, 0.07);
+        }
+
+        /* =========================================
+           GENERAL SECTIONS
+           ========================================= */
+
+        .home-section {
+            width: 100%;
+
+            max-width: 1180px;
+
+            margin: 0 auto;
+
+            padding: 85px 20px;
+        }
+
+        .section-heading {
+            text-align: center;
+
+            max-width: 760px;
+
+            margin:
+                0 auto 45px;
+        }
+
+        .section-heading h2 {
+            margin-bottom: 12px;
+
+            font-size:
+                clamp(28px, 4vw, 40px);
+
+            line-height: 1.15;
+
+            color: #0f172a;
+
+            letter-spacing: -0.03em;
+        }
+
+        .section-heading p {
+            color: #64748b;
+
+            font-size: 16px;
+
+            line-height: 1.7;
+        }
+
+        /* =========================================
+           FEATURE SECTION
+           ========================================= */
+
+        .features-section {
+            background: #f8fafc;
+        }
+
+        .feature-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 18px;
+        }
+
+        .feature-card {
+            background: white;
+
+            padding: 28px 22px;
+
+            border-radius: 14px;
+
+            border: 1px solid #e2e8f0;
+
+            box-shadow:
+                0 4px 15px
+                rgba(15, 23, 42, 0.05);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
+            text-align: left;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+
+            box-shadow:
+                0 12px 28px
+                rgba(15, 23, 42, 0.10);
+        }
+
+        .feature-icon {
+            width: 55px;
+            height: 55px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 18px;
+
+            border-radius: 12px;
+
+            background: #f1f5f9;
+
+            font-size: 27px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 10px;
+
+            color: #0f172a;
+
+            font-size: 18px;
+        }
+
+        .feature-card p {
+            color: #64748b;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+        }
+
+        /* =========================================
+           HOW IT WORKS
+           ========================================= */
+
+        .how-section {
+            background: white;
+        }
+
+        .steps-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 18px;
+
+            position: relative;
+        }
+
+        .step-card {
+            position: relative;
+
+            padding: 28px 22px;
+
+            border-radius: 14px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+
+            text-align: center;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin: 0 auto 17px;
+
+            border-radius: 50%;
+
+            background: #dc2626;
+
+            color: white;
+
+            font-size: 19px;
+
+            font-weight: 800;
+
+            box-shadow:
+                0 6px 15px
+                rgba(220, 38, 38, 0.22);
+        }
+
+        .step-card h3 {
+            margin-bottom: 9px;
+
+            color: #0f172a;
+
+            font-size: 18px;
+        }
+
+        .step-card p {
+            color: #64748b;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+        }
+
+        /* =========================================
+           AUTHORITY SECTION
+           ========================================= */
+
+        .authority-section {
+            padding: 75px 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #0f172a,
+                    #1e293b
+                );
+
+            color: white;
+
+            text-align: center;
+        }
+
+        .authority-inner {
+            max-width: 760px;
+
+            margin: 0 auto;
+        }
+
+        .authority-icon {
+            font-size: 44px;
+
+            margin-bottom: 15px;
+        }
+
+        .authority-section h2 {
+            margin-bottom: 12px;
+
+            font-size:
+                clamp(28px, 4vw, 40px);
+        }
+
+        .authority-section p {
+            max-width: 650px;
+
+            margin: 0 auto 28px;
+
+            color: #cbd5e1;
+
+            line-height: 1.75;
+        }
+
+        .authority-section button {
+            background: #dc2626;
+
+            min-width: 210px;
+        }
+
+        .authority-section button:hover {
+            background: #ef4444;
+        }
+
+        /* =========================================
+           FOOTER
+           ========================================= */
+
+        .home-footer {
+            margin-top: 0;
+
+            padding: 26px 20px;
+
+            background: #020617;
+
+            color: #94a3b8;
+
+            text-align: center;
+
+            font-size: 14px;
+        }
+
+        .home-footer strong {
+            color: #e2e8f0;
+        }
+
+        /* =========================================
+           MOBILE
+           ========================================= */
+
+        @media (max-width: 950px) {
+
+            .feature-grid,
+            .steps-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .home-hero {
+                min-height: 600px;
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .home-header {
+                padding: 15px 18px;
+            }
+
+            .home-header-inner {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+            .home-nav {
+                width: 100%;
+            }
+
+            .home-nav a {
+                padding-left: 0;
+            }
+
+            .home-hero {
+                min-height: 570px;
+
+                padding:
+                    60px 16px;
+            }
+
+            .hero-content h1 {
+                font-size: 42px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero-buttons a {
+                width: 100%;
+                max-width: 360px;
+            }
+
+            .hero-buttons button {
+                width: 100%;
+            }
+
+            .home-section {
+                padding:
+                    65px 16px;
+            }
+
+            .feature-grid,
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .authority-section {
+                padding:
+                    60px 18px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     HEADER
+     ========================================= -->
+
+<header class="home-header">
+
+    <div class="home-header-inner">
+
+        <div class="brand">
+            🚨 Disaster Response
+        </div>
+
+
+        <nav class="home-nav">
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/report">
+                Report
+            </a>
+
+            <a href="/reports">
+                My Reports
+            </a>
+
+            <a href="/track">
+                Track Report
+            </a>
+
+            <a href="/authority/login">
+                Authority
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================
+     HERO
+     ========================================= -->
+
+<section class="home-hero">
+
+    <div class="hero-decoration hero-decoration-one"></div>
+
+    <div class="hero-decoration hero-decoration-two"></div>
+
+
+    <div class="hero-content">
+
+        <div class="hero-label">
+            AI-POWERED EMERGENCY COORDINATION
+        </div>
+
+
+        <h1>
+
+            Intelligent Disaster
+
+            <span>
+                Reporting &amp; Response
+            </span>
+
+        </h1>
+
+
+        <p class="hero-description">
+
+            Report emergencies quickly and let the system
+            analyze disaster type, estimate severity,
+            identify related reports, calculate priority,
+            and support coordinated emergency response.
+
+        </p>
+
+
+        <div class="hero-buttons">
+
+            <a href="/report">
+
+                <button type="button">
+                    🚨 Report an Emergency
+                </button>
+
+            </a>
+
+
+            <a href="/reports">
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                >
+                    📋 My Reports
+                </button>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================
+     FEATURES
+     ========================================= -->
+
+<section class="home-section features-section">
+
+    <div class="section-heading">
+
+        <h2>
+            🤖 Intelligent Emergency Analysis
+        </h2>
+
+        <p>
+            Machine learning and decision logic help
+            transform an emergency report into structured
+            information for response coordination.
+        </p>
+
+    </div>
+
+
+    <div class="feature-grid">
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🌪️
+            </div>
+
+            <h3>
+                Disaster Classification
+            </h3>
+
+            <p>
+                Automatically identifies the disaster type
+                from the emergency description.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                ⚠️
+            </div>
+
+            <h3>
+                Severity Prediction
+            </h3>
+
+            <p>
+                Analyzes the report to estimate severity
+                and identify situations requiring attention.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🔍
+            </div>
+
+            <h3>
+                Related Report Detection
+            </h3>
+
+            <p>
+                Uses text similarity analysis to identify
+                potentially duplicate or related reports.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🚨
+            </div>
+
+            <h3>
+                Intelligent Prioritization
+            </h3>
+
+            <p>
+                Calculates a priority level and score
+                to support emergency queue management.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =========================================
+     HOW IT WORKS
+     ========================================= -->
+
+<section class="home-section how-section">
+
+    <div class="section-heading">
+
+        <h2>
+            📋 How It Works
+        </h2>
+
+        <p>
+            A simple workflow connects citizens,
+            automated analysis, and authority response.
+        </p>
+
+    </div>
+
+
+    <div class="steps-grid">
+
+
+        <div class="step-card">
+
+            <div class="step-number">
+                1
+            </div>
+
+            <h3>
+                Submit Report
+            </h3>
+
+            <p>
+                A citizen provides the emergency
+                description, location, and evidence.
+            </p>
+
+        </div>
+
+
+        <div class="step-card">
+
+            <div class="step-number">
+                2
+            </div>
+
+            <h3>
+                AI Analysis
+            </h3>
+
+            <p>
+                The system analyzes the report and
+                identifies its disaster characteristics.
+            </p>
+
+        </div>
+
+
+        <div class="step-card">
+
+            <div class="step-number">
+                3
+            </div>
+
+            <h3>
+                Priority Assigned
+            </h3>
+
+            <p>
+                Severity and disaster type contribute
+                to the calculated response priority.
+            </p>
+
+        </div>
+
+
+        <div class="step-card">
+
+            <div class="step-number">
+                4
+            </div>
+
+            <h3>
+                Authority Response
+            </h3>
+
+            <p>
+                Authorities review reports, assign teams,
+                and update response status.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =========================================
+     AUTHORITY PORTAL
+     ========================================= -->
+
+<section class="authority-section">
+
+    <div class="authority-inner">
+
+        <div class="authority-icon">
+            🔐
+        </div>
+
+        <h2>
+            Emergency Authority Portal
+        </h2>
+
+        <p>
+            Authorized personnel can review emergency
+            reports, manage the response queue, assign
+            rescue teams, view locations and evidence,
+            and update response status.
+        </p>
+
+
+        <a href="/authority/login">
+
+            <button type="button">
+                🔐 Authority Login
+            </button>
+
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================
+     FOOTER
+     ========================================= -->
+
+<footer class="home-footer">
+
+    <p>
+        <strong>
+            🚨 AI Disaster Response System
+        </strong>
+        <br>
+        AI-assisted emergency reporting and
+        intelligent emergency coordination.
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>

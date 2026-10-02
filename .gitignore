@@ -1,0 +1,22 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# SQLite database
+instance/*.db
+instance/*_backup*.db
+
+# Uploaded evidence
+static/uploads/*
+
+# Local backups
+app_backup*.py
+
+# Old frontend archives / duplicate folders
+disaster-response-frontend.zip
+disaster-response-frontend 2/
+disaster-response-frontend/

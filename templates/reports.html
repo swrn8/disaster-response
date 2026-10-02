@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Emergency Reports | Disaster Response</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <style>
+
+        body {
+            background:
+                linear-gradient(
+                    180deg,
+                    #f8fafc 0%,
+                    #eef2f7 100%
+                );
+        }
+
+        .reports-page {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 45px 20px 70px;
+        }
+
+        .reports-heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .reports-heading-icon {
+            width: 72px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: #dbeafe;
+            border: 2px solid #bfdbfe;
+            font-size: 34px;
+        }
+
+        .reports-heading h1 {
+            margin-bottom: 10px;
+            color: #0f172a;
+            font-size: clamp(32px, 5vw, 48px);
+            line-height: 1.1;
+            letter-spacing: -0.035em;
+        }
+
+        .reports-heading p {
+            max-width: 680px;
+            margin: 0 auto;
+            color: #64748b;
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        .report-count {
+            margin-bottom: 25px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            box-shadow:
+                0 4px 12px rgba(15, 23, 42, 0.05);
+            color: #475569;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .report-count strong {
+            color: #0f172a;
+        }
+
+        .public-report-card {
+            background: white;
+            margin-bottom: 22px;
+            padding: 28px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            box-shadow:
+                0 5px 18px rgba(15, 23, 42, 0.06);
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .public-report-card:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 10px 28px rgba(15, 23, 42, 0.09);
+        }
+
+        .public-report-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .public-report-header h2 {
+            margin: 0;
+            color: #0f172a;
+            font-size: 23px;
+        }
+
+        .report-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 7px 13px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+
+        .status-progress {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        .status-resolved {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .status-default {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+
+        .description-box {
+            margin-bottom: 22px;
+            padding: 18px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .description-box .label {
+            display: block;
+            margin-bottom: 8px;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .description-box p {
+            margin: 0;
+            color: #334155;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .detail-item {
+            padding: 17px;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+        }
+
+        .detail-label {
+            display: block;
+            margin-bottom: 7px;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .detail-value {
+            color: #0f172a;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .priority-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .priority-critical {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .priority-high {
+            background: #ffedd5;
+            color: #9a3412;
+            border: 1px solid #f97316;
+        }
+
+        .priority-medium {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+
+        .priority-low {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #22c55e;
+        }
+
+        .score-box {
+            margin-bottom: 20px;
+            padding: 18px;
+            border-radius: 10px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #fef2f2,
+                    #fff7ed
+                );
+            border: 1px solid #fed7aa;
+        }
+
+        .score-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .score-label {
+            color: #475569;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .score-value {
+            color: #0f172a;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .score-bar {
+            width: 100%;
+            height: 10px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #e2e8f0;
+        }
+
+        .score-fill {
+            width: 0%;
+            height: 100%;
+            border-radius: 999px;
+            background:
+                linear-gradient(
+                    90deg,
+                    #f59e0b,
+                    #dc2626
+                );
+            transition: width 0.5s ease;
+        }
+
+        .report-time {
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .empty-state {
+            background: white;
+            padding: 50px 25px;
+            text-align: center;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            box-shadow:
+                0 5px 18px rgba(15, 23, 42, 0.06);
+        }
+
+        .empty-icon {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 10px;
+            color: #0f172a;
+        }
+
+        .empty-state p {
+            margin-bottom: 25px;
+            color: #64748b;
+        }
+
+        .reports-navigation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .reports-navigation a {
+            display: inline-flex;
+        }
+
+        .reports-navigation button {
+            min-width: 190px;
+            margin: 0;
+        }
+
+        @media (max-width: 700px) {
+
+            .reports-page {
+                padding:
+                    30px 14px
+                    55px;
+            }
+
+            .public-report-card {
+                padding: 20px;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .public-report-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .reports-heading h1 {
+                font-size: 34px;
+            }
+
+            .reports-heading p {
+                font-size: 15px;
+            }
+
+            .score-top {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .reports-navigation {
+                flex-direction: column;
+            }
+
+            .reports-navigation a,
+            .reports-navigation button {
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div
+        style="
+            max-width:1100px;
+            margin:0 auto;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+            flex-wrap:wrap;
+        "
+    >
+
+        <h2>
+            🚨 Disaster Response
+        </h2>
+
+        <a
+            href="/"
+            style="
+                color:white;
+                font-weight:600;
+            "
+        >
+            Home
+        </a>
+
+    </div>
+
+</header>
+
+
+<main class="reports-page">
+
+
+    <section class="reports-heading">
+
+        <div class="reports-heading-icon">
+            📋
+        </div>
+
+        <h1>
+            My Emergency Reports
+        </h1>
+
+        <p>
+            View your submitted emergency reports,
+            AI analysis, priority levels, and current
+            response status.
+        </p>
+
+    </section>
+
+
+    {% if reports %}
+
+
+        <div class="report-count">
+
+            You currently have
+
+            <strong>
+                {{ reports|length }}
+            </strong>
+
+            emergency report{% if reports|length != 1 %}s{% endif %}
+            in the system.
+
+        </div>
+
+
+        {% for report in reports %}
+
+
+            <article class="public-report-card">
+
+
+                <div class="public-report-header">
+
+                    <h2>
+                        🚨 Report #{{ report.id }}
+                    </h2>
+
+
+                    {% if report.status == "Pending" %}
+
+                        <span class="report-status status-pending">
+                            ⏳ Pending
+                        </span>
+
+
+                    {% elif report.status == "In Progress" %}
+
+                        <span class="report-status status-progress">
+                            🔵 In Progress
+                        </span>
+
+
+                    {% elif report.status == "Resolved" %}
+
+                        <span class="report-status status-resolved">
+                            🟢 Resolved
+                        </span>
+
+
+                    {% else %}
+
+                        <span class="report-status status-default">
+                            {{ report.status }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="description-box">
+
+                    <span class="label">
+                        Emergency Description
+                    </span>
+
+                    <p>
+                        {{ report.description }}
+                    </p>
+
+                </div>
+
+
+                <div class="details-grid">
+
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            📍 Location
+                        </span>
+
+                        <span class="detail-value">
+                            {{ report.location }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            🌪 Disaster Type
+                        </span>
+
+                        <span class="detail-value">
+                            {{ report.disaster_type }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            ⚠️ Severity
+                        </span>
+
+                        <span class="detail-value">
+                            {{ report.severity }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            🚨 Priority
+                        </span>
+
+                        <span class="detail-value">
+
+                            {% if report.priority == "Critical" %}
+
+                                <span class="priority-badge priority-critical">
+                                    🔴 Critical
+                                </span>
+
+
+                            {% elif report.priority == "High" %}
+
+                                <span class="priority-badge priority-high">
+                                    🟠 High
+                                </span>
+
+
+                            {% elif report.priority == "Medium" %}
+
+                                <span class="priority-badge priority-medium">
+                                    🟡 Medium
+                                </span>
+
+
+                            {% else %}
+
+                                <span class="priority-badge priority-low">
+                                    🟢 Low
+                                </span>
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="score-box">
+
+                    <div class="score-top">
+
+                        <span class="score-label">
+                            📊 Priority Score
+                        </span>
+
+                        <span class="score-value">
+                            {{ report.priority_score }}/100
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="score-bar"
+                        data-score="{{ report.priority_score|default(0, true) }}"
+                    >
+
+                        <div class="score-fill"></div>
+
+                    </div>
+
+                </div>
+
+
+                {% if report.created_at %}
+
+                    <div class="report-time">
+
+                        🕒 Submitted:
+
+                        {{ report.created_at.strftime(
+                            "%d %B %Y, %I:%M %p"
+                        ) }}
+
+                    </div>
+
+                {% endif %}
+
+
+            </article>
+
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <section class="empty-state">
+
+            <div class="empty-icon">
+                📭
+            </div>
+
+            <h2>
+                No Emergency Reports Yet
+            </h2>
+
+            <p>
+                You have not submitted an emergency report.
+                Create your first report to get started.
+            </p>
+
+
+            <a href="/report">
+
+                <button type="button">
+                    🚨 Report an Emergency
+                </button>
+
+            </a>
+
+        </section>
+
+
+    {% endif %}
+
+
+    <div class="reports-navigation">
+
+        <a href="/report">
+
+            <button type="button">
+                🚨 Report Another Emergency
+            </button>
+
+        </a>
+
+
+        <a href="/track">
+
+            <button
+                type="button"
+                class="location-button"
+            >
+                📍 Track a Report
+            </button>
+
+        </a>
+
+
+        <a href="/">
+
+            <button
+                type="button"
+                class="secondary-button"
+            >
+                ← Home
+            </button>
+
+        </a>
+
+    </div>
+
+
+</main>
+
+
+<footer>
+
+    <p>
+        🚨 AI Disaster Response System
+        · Emergency reporting and response tracking
+    </p>
+
+</footer>
+
+
+<script>
+
+document.querySelectorAll(".score-bar").forEach(
+    function(scoreBar) {
+
+        const score =
+            Number(
+                scoreBar.dataset.score
+            );
+
+
+        const safeScore =
+            Math.max(
+                0,
+                Math.min(
+                    score,
+                    100
+                )
+            );
+
+
+        const fill =
+            scoreBar.querySelector(
+                ".score-fill"
+            );
+
+
+        if (fill) {
+
+            fill.style.width =
+                safeScore + "%";
+
+        }
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>
