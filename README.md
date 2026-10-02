@@ -230,3 +230,69 @@ Priority categories include:
                  │ Response History /   │
                  │ Emergency Tracking   │
                  └──────────────────────┘
+🛠️ Technologies Used
+Backend
+Python
+Flask
+Flask-SQLAlchemy
+SQLite
+Frontend
+HTML5
+CSS3
+JavaScript
+Machine Learning / NLP
+Scikit-learn
+NumPy
+Pandas
+TF-IDF
+Logistic Regression
+Cosine Similarity
+Rule-based severity analysis
+Weighted priority logic
+Mapping
+Browser Geolocation API
+Google Maps links
+Leaflet-based map functionality in the authority interface
+📂 Project Structure
+disaster-response/
+│
+├── app.py
+│
+├── backend/
+│   ├── rescue_team.py
+│   └── response_queue.py
+│
+├── ml/
+│   ├── disaster_classifier.py
+│   ├── priority.py
+│   ├── severity_predictor.py
+│   └── similarity.py
+│
+├── templates/
+│   ├── index.html
+│   ├── report.html
+│   ├── report_success.html
+│   ├── reports.html
+│   ├── track_report.html
+│   ├── track_report_result.html
+│   │
+│   └── authority/
+│       ├── dashboard.html
+│       ├── login.html
+│       └── report_details.html
+│
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   │
+│   ├── js/
+│   │   └── location_legacy.js
+│   │
+│   └── uploads/
+│
+├── instance/
+│   └── disaster.db
+│
+├── requirements.txt
+├── .gitignore
+└── README.md
